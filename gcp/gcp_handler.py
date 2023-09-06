@@ -1,15 +1,12 @@
-#!/usr/bin/env python3
-import logging
 import re
 from pathlib import Path
 
 from google.cloud import exceptions, storage
 
-from config.config import load_config
+from config.config import load_config, log
 from utilities.validators import Google
 
 config = load_config()
-log = logging.getLogger(__name__)
 
 
 class GCP_Handler:
@@ -138,6 +135,38 @@ class GCP_Handler:
         bucket = self.storage_client.bucket(bucket_name)
         blobs = bucket.list_blobs()
         return [blob.name for blob in blobs]
+
+    def list_blobs_in_bucket_with_prefix(
+        self, bucket_name: str, prefix: str, delimiter: str | None = None
+    ) -> list[str]:
+        """
+        Lists blobs in a given bucket with prefix.
+
+        Args:
+            bucket_name (str): Bubket name to list blobs in.
+            prefix (str): Pattern the URI must match.
+            delimiter (str | None): Restricts the results to only the "files" in the given
+            "folder".
+
+        Returns:
+            list[str]: List of URIs.
+        """
+        bucket = self.storage_client.bucket(bucket_name)
+        blobs = bucket.list_blobs(prefix=prefix, delimiter=delimiter)
+        return [blob.name for blob in blobs]
+
+    def get_uri_from_topic(self, topic: str) -> str:
+        """
+        Searches image URI corresponding to a given topic (eg. `donald_trump` or
+        `cryptocurrency`).
+
+        Args:
+            topic (str): Article topic.
+
+        Returns:
+            str: Valid image URI.
+        """
+        pass
 
     def delete_blob(self, uri: str) -> None:
         """

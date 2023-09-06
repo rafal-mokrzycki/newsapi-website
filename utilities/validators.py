@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validators for the funtionalities of the app."""
 import re
 
