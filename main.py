@@ -11,13 +11,14 @@ MODES = ["no_gcp"]  # used for running app without GCP access
 logging.basicConfig(level=logging.INFO)
 
 console = logging.StreamHandler()
-console.setLevel(logging.DEBUG)
+console.setLevel(logging.INFO)
 # set a format which is simpler for console use
-formatter = logging.Formatter("%(name)-12s: %(levelname)-8s %(message)s")
+formatter = logging.Formatter("%(asctime)s : %(name)s : %(levelname)s : %(message)s")
 # tell the handler to use this format
 console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger("").addHandler(console)
+# TODO: get rid of double logging
 
 
 class Director:
@@ -33,9 +34,10 @@ class Director:
         return raw_headlines
 
     def unpack_articles_dict(self):
+        """Returns raw urls, headlines and articles"""
         article_parser = ArticleParser()
         articles_dict = self.get_articles_dict()
-        articles_all = articles_dict["articles"]
+        articles_all = articles_dict["articles"][:LIMIT]
         urls = [article["url"] for article in articles_all]
         headlines = [article["title"] for article in articles_all]
         articles = article_parser.get_original_article_text(
@@ -45,20 +47,28 @@ class Director:
         return urls, headlines, articles
 
     def rewrite(self):
-        # TODO: order
-        urls, headlines, articles = self.unpack_articles_dict()
-        if self.mode != "no_gcp":
-            gcs = GCP_Handler()
-        uris, r_headlines, r_articles = [], [], []
-        for headline, article in zip(headlines, articles):
-            ai_writer = AI_Writer(headline=headline, article=article, mode=self.mode)
-            topic = ai_writer.detect_topic()
-            if self.mode == "no_gcp":
+        """Returns urls, uris, rewritten headlines and rewritten articles"""
+        if self.mode == "no_gcp":
+            urls, headlines, articles = self.unpack_articles_dict()
+            uris, r_headlines, r_articles = [], [], []
+            for headline, article in zip(headlines, articles):
+                ai_writer = AI_Writer(headline=headline, article=article, mode=self.mode)
+                topic = ai_writer.detect_topic()
                 uris.append(f"gs://sample-uri/{topic}")
-            else:
+                r_headlines.append(ai_writer.rewrite_headline())
+                r_articles.append(ai_writer.rewrite_article())
+
+        else:
+            gcs = GCP_Handler()
+            urls, headlines, articles = self.unpack_articles_dict()
+            uris, r_headlines, r_articles = [], [], []
+            for headline, article in zip(headlines, articles):
+                ai_writer = AI_Writer(headline=headline, article=article, mode=self.mode)
+                topic = ai_writer.detect_topic()
                 uris.append(gcs.get_uri_from_topic(topic))
-            r_headlines.append(ai_writer.rewrite_headline())
-            r_articles.append(ai_writer.rewrite_article())
+                r_headlines.append(ai_writer.rewrite_headline())
+                r_articles.append(ai_writer.rewrite_article())
+
         return urls, uris, r_headlines, r_articles
 
     def post(headline: str, article: str, image: str):
@@ -72,11 +82,12 @@ def main(mode="no_gcp"):
     # 2b. Format and filter raw article texts (`article_parser.py`)
     # 3a. Rewrite articles and headlines (`ai_writer.py`)
     # 3b. Get article main topic (`ai_writer.py`)
-    # 3c. Get a photo from Google Storage that correspondents to the article main topic (`ai_writer.py` + `gcp_handler.py`)
-    # 4a. Return rewritten article text, rewritten headline and an image from Google Storage (...)
+    # 3c. Get a photo from Google Storage that correspondents to the article main topic \
+    # (`ai_writer.py` + `gcp_handler.py`)
+    # 4a. Return rewritten article text, rewritten headline and an image from Google \
+    # Storage (...)
     _, uris, r_headlines, r_articles = director.rewrite()
-    print(len(uris))
-    print(r_headlines)
+
     # 4b. Reformat rewritten article text, inserting html code for advertisment (...)
 
     # 4c. Post article + headline + image (...)

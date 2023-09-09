@@ -48,7 +48,7 @@ class GCP_Handler:
                 bucket = self.storage_client.bucket(bucket_name)
                 bucket.storage_class = storage_class
                 self.storage_client.create_bucket(bucket_name, location=location)
-                logging.info("Bucket {} created".format(bucket_name))
+                logging.info(f"Bucket {bucket_name} created")
             except (BaseException, exceptions.Conflict):
                 # If the bucket already exists, ignore the 409 HTTP error and
                 # continue with the rest of the program.

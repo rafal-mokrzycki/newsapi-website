@@ -1,7 +1,11 @@
+import logging
+import re
+
 import repackage
 from transformers import pipeline
 
 repackage.up()
+
 from config.config import load_config
 from gcp_handler.gcp_handler import GCP_Handler
 
@@ -25,17 +29,19 @@ class AI_Writer:
     def rewrite_article(self) -> str:
         """Rewrites an article and sets instance variable `rewritten_article`"""
         rewritten_article = self.rewrite_text(
-            input=self.article, max_length=1024, n_sentences=25
+            input=self.article, max_length=None, n_sentences=25
         )
         self.rewritten_article = rewritten_article
+        logging.info("Article rewritten")
         return rewritten_article
 
     def rewrite_headline(self) -> str:
         """Rewrites a headline and sets instance variable `rewritten_headline`"""
         rewritten_headline = self.rewrite_text(
-            input=self.headline, max_length=200, n_sentences=1
+            input=self.headline, max_length=None, n_sentences=1
         )
         self.rewritten_headline = rewritten_headline
+        logging.info("Headline rewritten")
         return rewritten_headline
 
     def detect_topic(self) -> None:
@@ -45,18 +51,25 @@ class AI_Writer:
         for ne in named_entities:
             if "PER" in ne.values():
                 if self.mode == "no_gcp":
+                    logging.info(
+                        f"Named entity `{ne['word']}` not looked up in GCP due to \
+                            mode='no_gcp'"
+                    )
                     return ne["word"]
                 # if there is an image with this person in GCS return its URI
                 # else continue
-                if GCP_Handler().is_person_in_gcs(
-                    person=ne["word"], bucket_name="images"
-                ):
-                    self.topic = ne["word"]
-                    return ne["word"]
                 else:
-                    continue
-        # if no image of a person found, detect a general topic of the article and return
-        # an image corrensponding to that
+                    if GCP_Handler().is_person_in_gcs(
+                        person=ne["word"], bucket_name="images"
+                    ):
+                        self.topic = ne["word"]
+                        logging.info(f"Named entity `{ne['word']}` found in GCP")
+                        return ne["word"]
+                    else:
+                        logging.warning(f"Named entity `{ne['word']}` not found in GCP")
+                        continue
+        # if no image of a person found or there is no person in named entities, \
+        # detect a general topic of the article and return an image corrensponding to that
         classifier = pipeline(task="zero-shot-classification", model=CLASSIFICATION_MODEL)
         result = classifier(
             self.article,
@@ -65,8 +78,10 @@ class AI_Writer:
         # return label where score is max
         scores_list = result["scores"]
         n_max = scores_list.index(max(scores_list))
-        self.topic = result["labels"][n_max]
-        return result["labels"][n_max]
+        topic = result["labels"][n_max]
+        self.topic = topic
+        logging.info(f"`topic` set to {topic}")
+        return topic
 
     def get_named_entities(self) -> list[dict]:
         """Returns named entities in an article"""
@@ -78,8 +93,8 @@ class AI_Writer:
     def rewrite_text(
         input: str,
         temperature=0.6,
-        max_length: int = 256,
-        n_sentences: int = 1,
+        max_length: int = None,
+        n_sentences: int = None,
         task: str | None = None,
         model: str | None = None,
     ) -> str:
@@ -99,10 +114,12 @@ class AI_Writer:
         """
         # TODO: check another library
         # TODO: check another model
+        number_of_tokens = len(re.findall(r"\b", input)) // 2
+        max_length = number_of_tokens * 1.5 if max_length is None else max_length
         task = "text-generation" if task is None else task
         model = TEXT_GENERATION_MODEL if model is None else model
         generator = pipeline(task, model=model)
-        return generator(
+        generated_text = generator(
             input,
             do_sample=True,
             top_k=50,
@@ -111,3 +128,5 @@ class AI_Writer:
             num_return_sequences=n_sentences,
             pad_token_id=generator.tokenizer.eos_token_id,
         )[0]["generated_text"]
+        logging.info("Text generated")
+        return generated_text

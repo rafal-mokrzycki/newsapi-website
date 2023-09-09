@@ -1,3 +1,4 @@
+import logging
 import random
 import re
 import time
@@ -52,15 +53,18 @@ class ArticleParser:
                 # web scraping
                 article = Article(url)
                 article.download()
+                logging.info(f"Article no. {num + 1} downloaded")
                 article.parse()
                 articles_raw_texts.append(article.text)
                 time_to_sleep = random.choice(list(range(5, 10)))
                 time.sleep(time_to_sleep)
+                logging.info("All articles downloaded")
             return articles_raw_texts
         else:
             article = Article(url_to_search)
             article.download()
             article.parse()
+            logging.info("One article downloaded")
             return article.text
 
     def filter_texts(
@@ -84,5 +88,7 @@ class ArticleParser:
         filtered_texts = []
         for raw_text in articles_raw_texts:
             for pattern in filter_:
-                filtered_texts.append(re.sub(pattern=pattern, repl="", string=raw_text))
+                filtered_texts.append(
+                    re.sub(pattern=pattern, repl="", string=raw_text, flags=re.I)
+                )
         return [filtered_text.replace("\n", "") for filtered_text in filtered_texts]
