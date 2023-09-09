@@ -1,8 +1,5 @@
 import json
-import logging
 from pathlib import Path
-
-log = logging.getLogger(__name__)
 
 
 def load_config(file_name="config.json") -> dict:

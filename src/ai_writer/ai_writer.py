@@ -1,9 +1,9 @@
-import random
-
+import repackage
 from transformers import pipeline
 
+repackage.up()
 from config.config import load_config
-from gcp.gcp_handler import GCP_Handler
+from gcp_handler.gcp_handler import GCP_Handler
 
 NER_MODEL = "Jean-Baptiste/camembert-ner"
 CLASSIFICATION_MODEL = "facebook/bart-large-mnli"
@@ -14,35 +14,44 @@ config = load_config()
 
 
 class AI_Writer:
-    def __init__(self, headline: str, article: str) -> None:
+    def __init__(self, headline: str, article: str, mode: str = "no_gcp") -> None:
         self.headline = headline
         self.article = article
+        self.rewritten_headline = None
+        self.rewritten_article = None
+        self.topic = None
+        self.mode = mode
 
     def rewrite_article(self) -> str:
         """Rewrites an article and sets instance variable `rewritten_article`"""
-        return self.rewrite_text(input=self.article, max_length=1024, n_sentences=25)
+        rewritten_article = self.rewrite_text(
+            input=self.article, max_length=1024, n_sentences=25
+        )
+        self.rewritten_article = rewritten_article
+        return rewritten_article
 
     def rewrite_headline(self) -> str:
         """Rewrites a headline and sets instance variable `rewritten_headline`"""
-        return self.rewrite_text(input=self.headline, max_length=200, n_sentences=1)
+        rewritten_headline = self.rewrite_text(
+            input=self.headline, max_length=200, n_sentences=1
+        )
+        self.rewritten_headline = rewritten_headline
+        return rewritten_headline
 
-    def detect_topic(self, named_entities: list[dict]) -> str:
-        """
-        Detects article topic based in named entities in an article sets instance
-        variable `topic`
-        """
-        # TODO: rebuild!!!
-
+    def detect_topic(self) -> None:
+        """Detects article topic and sets instance variable `topic`."""
+        named_entities = self.get_named_entities()
         # if there is a named entity PERSON in an article, return their name
         for ne in named_entities:
             if "PER" in ne.values():
-                # if there is an image with this person in GS return its URI
+                if self.mode == "no_gcp":
+                    return ne["word"]
+                # if there is an image with this person in GCS return its URI
                 # else continue
-                prefix = ne["word"].replace(" ", "_")
-                gs_persons_files = GCP_Handler().list_blobs_in_bucket_with_prefix(
-                    bucket_name=config["gcp"]["img_bucket_name"], prefix=prefix
-                )
-                if ne["word"] in gs_persons_files:
+                if GCP_Handler().is_person_in_gcs(
+                    person=ne["word"], bucket_name="images"
+                ):
+                    self.topic = ne["word"]
                     return ne["word"]
                 else:
                     continue
@@ -56,6 +65,7 @@ class AI_Writer:
         # return label where score is max
         scores_list = result["scores"]
         n_max = scores_list.index(max(scores_list))
+        self.topic = result["labels"][n_max]
         return result["labels"][n_max]
 
     def get_named_entities(self) -> list[dict]:
@@ -101,7 +111,3 @@ class AI_Writer:
             num_return_sequences=n_sentences,
             pad_token_id=generator.tokenizer.eos_token_id,
         )[0]["generated_text"]
-
-
-if __name__ == "__main__":
-    pass

@@ -1,10 +1,14 @@
+import logging
+import random
 import re
 from pathlib import Path
 
+import repackage
 from google.cloud import exceptions, storage
 
-from config.config import load_config, log
-from utilities.validators import Google
+repackage.up()
+from config.config import load_config
+from utils.validators import Google
 
 config = load_config()
 
@@ -44,11 +48,11 @@ class GCP_Handler:
                 bucket = self.storage_client.bucket(bucket_name)
                 bucket.storage_class = storage_class
                 self.storage_client.create_bucket(bucket_name, location=location)
-                log.info("Bucket {} created".format(bucket_name))
+                logging.info("Bucket {} created".format(bucket_name))
             except (BaseException, exceptions.Conflict):
                 # If the bucket already exists, ignore the 409 HTTP error and
                 # continue with the rest of the program.
-                log.warning("Bucket {} already exists.".format(bucket_name))
+                logging.warning("Bucket {} already exists.".format(bucket_name))
         else:
             raise NameError(
                 f"Bucket name '{bucket_name}' does not follow Google \
@@ -68,7 +72,7 @@ class GCP_Handler:
             bucket = self.storage_client.get_bucket(bucket_name)
             bucket.delete()
         except exceptions.NotFound:
-            log.error(f"Bucket {bucket_name} not found.")
+            logging.error(f"Bucket {bucket_name} not found.")
         except exceptions.Conflict:
             for blob in self.list_blobs_in_bucket(bucket_name):
                 self.delete_blob(bucket_name, blob)
@@ -84,9 +88,7 @@ class GCP_Handler:
         return [bucket.name for bucket in buckets]
 
     def write_blob_to_bucket(
-        self,
-        input_text: str,
-        bucket_name: str,
+        self, input_text: str, bucket_name: str, prefix=str, blob_name=str
     ) -> None:
         """
         Writes a string into a blob in a bucket.
@@ -96,13 +98,13 @@ class GCP_Handler:
             bucket_name (str): Bucket to write a string to.
         """
         bucket = self.storage_client.bucket(bucket_name)
-        blob_name = ""  # TODO: define blob naming
+        blob_name = f"gs://images/{prefix}/{blob_name}"
         blob = bucket.blob(blob_name)
         try:
             blob.upload_from_string(input_text)
-            log.info(f"String uploaded to gs://{bucket_name}/{blob_name}")
+            logging.info(f"String uploaded to gs://{bucket_name}/{blob_name}")
         except exceptions.GoogleCloudError as e:
-            log.error(e)
+            logging.error(e)
 
     def read_blob_from_bucket(self, uri: str) -> str:
         """
@@ -155,7 +157,7 @@ class GCP_Handler:
         blobs = bucket.list_blobs(prefix=prefix, delimiter=delimiter)
         return [blob.name for blob in blobs]
 
-    def get_uri_from_topic(self, topic: str) -> str:
+    def get_uri_from_topic(self, topic: str, bucket_name: str) -> str:
         """
         Searches image URI corresponding to a given topic (eg. `donald_trump` or
         `cryptocurrency`).
@@ -166,7 +168,11 @@ class GCP_Handler:
         Returns:
             str: Valid image URI.
         """
-        pass
+        uri_list = self.list_blobs_in_bucket_with_prefix(
+            bucket_name=bucket_name, prefix=topic
+        )
+        index = random.randint(1, len(uri_list))
+        return uri_list[index]
 
     def delete_blob(self, uri: str) -> None:
         """
@@ -180,10 +186,20 @@ class GCP_Handler:
         try:
             bucket = self.storage_client.bucket(bucket_name)
             blob = bucket.blob(blob_name)
-            log.warning(f"Blob {blob_name} deleted in bucket: {bucket_name}.")
+            logging.warning(f"Blob {blob_name} deleted in bucket: {bucket_name}.")
             blob.delete()
         except exceptions.NotFound:
-            log.error(f"Blob {blob_name} not found.")
+            logging.error(f"Blob {blob_name} not found.")
+
+    def is_person_in_gcs(self, bucket_name: str, person: str) -> bool:
+        person_snake_case = person.lower().replace(
+            " ", "_"
+        )  # Donald Trump -> donald_trump
+        prefix = f"{person_snake_case}/"
+        # check if list has objects inside
+        if self.list_blobs_in_bucket_with_prefix(bucket_name=bucket_name, prefix=prefix):
+            return True
+        return False
 
     @staticmethod
     def get_bucket_and_blob_from_uri(uri: str) -> str:

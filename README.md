@@ -21,3 +21,11 @@
 4b. Reformat rewritten article text, inserting html code for advertisment (...)
 
 4c. Post article + headline + image (...)
+
+### Blob naming
+
+#### images:
+
+`gs://images/donald_trump/donald_trump_1.jpg`
+`gs://images/donald_trump/donald_trump_2.jpg`
+`gs://images/joe_biden/joe_biden_1.jpg`

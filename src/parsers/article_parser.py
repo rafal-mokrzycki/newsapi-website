@@ -51,6 +51,7 @@ class ArticleParser:
                     break
                 # web scraping
                 article = Article(url)
+                article.download()
                 article.parse()
                 articles_raw_texts.append(article.text)
                 time_to_sleep = random.choice(list(range(5, 10)))
@@ -58,6 +59,7 @@ class ArticleParser:
             return articles_raw_texts
         else:
             article = Article(url_to_search)
+            article.download()
             article.parse()
             return article.text
 

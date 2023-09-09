@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -5,15 +6,13 @@ import requests
 from newsapi import NewsApiClient
 from newsapi.newsapi_exception import NewsAPIException
 
-from config.config import log
-
 DOMAINS = "cnn.com"
 LANGUAGE = "en"
 COUNTRY = "us"
 HOURS_AGO = 250
 
 
-# rewrite as own module
+# TODO: rewrite as own module
 class NewsHandler(NewsApiClient):
     """
     Class for news handling. Enables to collect headlines or whole
@@ -51,15 +50,13 @@ class NewsHandler(NewsApiClient):
         Returns:
             dict: Nested dictionary with all the gathered information.
         """
-        from_date = datetime.now() - timedelta(
-            hours=HOURS_AGO
-        )  # datetetime 1 hour ago -> HYPERPARAMETER
+        from_date = datetime.now() - timedelta(hours=HOURS_AGO)
         try:
             return self.get_everything(
                 from_param=from_date, language=self.language, domains=DOMAINS
             )  # domains param should be of type str
         except NewsAPIException as e:
-            log.error(e)
+            logging.error(e)
 
     @staticmethod
     def read_api_key(file_name: str = "api.key") -> str:
