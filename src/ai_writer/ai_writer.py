@@ -24,6 +24,7 @@ class AI_Writer:
         self.rewritten_headline = None
         self.rewritten_article = None
         self.topic = None
+        self.uri = None
         self.mode = mode
 
     def rewrite_article(self) -> str:
@@ -55,6 +56,7 @@ class AI_Writer:
                         f"Named entity `{ne['word']}` not looked up in GCP due to \
                             mode='no_gcp'"
                     )
+                    self.uri = "fake-uri"
                     return ne["word"]
                 # if there is an image with this person in GCS return its URI
                 # else continue
@@ -64,6 +66,7 @@ class AI_Writer:
                     ):
                         self.topic = ne["word"]
                         logging.info(f"Named entity `{ne['word']}` found in GCP")
+                        # TODO: set URI to self.uri
                         return ne["word"]
                     else:
                         logging.warning(f"Named entity `{ne['word']}` not found in GCP")

@@ -10,6 +10,7 @@ DOMAINS = "cnn.com"
 LANGUAGE = "en"
 COUNTRY = "us"
 HOURS_AGO = 250
+LIMIT = 2  # how many articles to return
 
 
 # TODO: rewrite as own module
@@ -40,21 +41,26 @@ class NewsHandler(NewsApiClient):
 
     def get_headlines_custom(
         self,
-    ) -> dict:
+    ) -> list[tuple[str]]:
         """
         Gets headlines by NewsAPI based on user's preferences.
 
-        Args:
-            n_headlines (int): Number of headlines to get.
-
         Returns:
-            dict: Nested dictionary with all the gathered information.
+            list[tuple[str]]: List of tuples (URL, headline)
         """
         from_date = datetime.now() - timedelta(hours=HOURS_AGO)
         try:
-            return self.get_everything(
-                from_param=from_date, language=self.language, domains=DOMAINS
-            )  # domains param should be of type str
+            api_results = self.get_everything(
+                from_param=from_date,
+                language=self.language,
+                domains=DOMAINS,
+                page=1,
+                page_size=LIMIT,
+            )
+            final_results = []
+            for result in api_results["articles"]:
+                final_results.append((result["url"], result["title"]))
+            return final_results
         except NewsAPIException as e:
             logging.error(e)
 
