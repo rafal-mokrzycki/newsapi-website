@@ -1,13 +1,56 @@
-{% if latest_article_list %}
-    <ul>
-    {% for article in latest_article_list %}
-    <a href="{% url 'newsapp:detail' article.id %}">{{ article.headline }}</a>
-    <br>
-    <a href="{% url 'newsapp:detail' article.id %}">{{ article.uri }}</a>
-    <br>
-    <br>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No news are available.</p>
-{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Portal</title>
+    <link rel="stylesheet" href="styles.css"> <!-- You can link to your CSS file here -->
+</head>
+<body>
+    <header>
+        <h1>News Portal</h1>
+        <!-- Add navigation menu or other header content here -->
+    </header>
+
+    <main>
+        <section class="newest-articles">
+            <h2>Newest Articles</h2>
+            <div class="article-grid">
+                {% for article in latest_article_list %}
+                <a href="{% url 'newsapp:detail' article.id %}">{{ article.headline }}</a>
+                <br>
+                <!-- <a href="{% url 'newsapp:detail' article.id %}">{{ article.image }}</a> -->
+                <a href="{% url 'newsapp:detail' article.id %}">
+                <img src="{{article.image.url}}" class="img-responsive" width="400" height="150">
+                </a>
+                <br>
+                <br>
+                {% endfor %}
+                            <!-- Repeat for the other articles -->
+            </div>
+        </section>
+
+        <section class="older-articles">
+            <h2>Recently added</h2>
+            <div class="article-list">
+                {% for article in recently_added_article_list %}
+                <a href="{% url 'newsapp:detail' article.id %}">{{ article.headline }}</a>
+                <br>
+                <!-- <a href="{% url 'newsapp:detail' article.id %}">{{ article.image }}</a> -->
+                <img src="{{article.image.url}}" class="img-responsive" width="400" height="150">
+                <br>
+                <br>
+                {% endfor %}
+                        </div>
+        </section>
+    </main>
+
+    <aside>
+        <!-- Add additional content, such as ads, related articles, or social media links here -->
+    </aside>
+
+    <footer>
+        <!-- Add footer content, such as copyright information or contact details here -->
+    </footer>
+</body>
+</html>
