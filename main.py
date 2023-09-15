@@ -1,25 +1,16 @@
 import logging
+from pathlib import Path
 
 from src.ai_writer.ai_writer import AI_Writer
 from src.gcp_handler.gcp_handler import GCP_Handler
 from src.news_handler.news_handler import NewsHandler
 from src.parsers import article_parser
-from src.utils.utils import timer, wait_for_web_scraping
+from src.utils.utils import CustomLogger, timer, wait_for_web_scraping
 
 LIMIT = 1
 MODES = ["no_gcp"]  # used for running app without GCP access
-
-logging.basicConfig(level=logging.INFO)
-
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-# set a format which is simpler for console use
-formatter = logging.Formatter("%(asctime)s : %(name)s : %(levelname)s : %(message)s")
-# tell the handler to use this format
-console.setFormatter(formatter)
-# add the handler to the root logger
-logging.getLogger("").addHandler(console)
-# TODO: get rid of double logging
+logger = CustomLogger(__file__)
+# TODO: get only filename without full path
 
 
 def main(mode):

@@ -4,6 +4,58 @@ import time
 from functools import wraps
 
 
+class CustomLogger:
+    # TODO: get rid of double logging
+
+    def __init__(self, name):
+        self.logger = logging.getLogger(name)
+        self.logger.setLevel(logging.DEBUG)
+
+        # Create a custom formatter
+        formatter = logging.Formatter(
+            fmt="%(asctime)s - %(name)s - %(levelname)s   %(message)s",
+        )
+
+        # Create a console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+
+        # Add the console handler to the logger
+        self.logger.addHandler(console_handler)
+
+        # Define custom log levels and colors
+        logging.addLevelName(
+            logging.DEBUG, "\033[36m%s\033[0m" % logging.getLevelName(logging.DEBUG)
+        )
+        logging.addLevelName(
+            logging.INFO, "\033[37m%s\033[0m" % logging.getLevelName(logging.INFO)
+        )
+        logging.addLevelName(
+            logging.WARNING, "\033[33m%s\033[0m" % logging.getLevelName(logging.WARNING)
+        )
+        logging.addLevelName(
+            logging.ERROR, "\033[31m%s\033[0m" % logging.getLevelName(logging.ERROR)
+        )
+        logging.addLevelName(
+            logging.CRITICAL, "\033[31m%s\033[0m" % logging.getLevelName(logging.CRITICAL)
+        )
+
+    def info(self, message):
+        self.logger.info(message)
+
+    def debug(self, message):
+        self.logger.debug(message)
+
+    def warning(self, message):
+        self.logger.warning(message)
+
+    def error(self, message):
+        self.logger.error(message)
+
+    def critical(self, message):
+        self.logger.critical(message)
+
+
 def timer(func):
     @wraps(func)
     def wrapper(*args, **kwargs):

@@ -8,6 +8,7 @@ repackage.up()
 
 from config.config import load_config
 from gcp_handler.gcp_handler import GCP_Handler
+from src.utils.utils import CustomLogger
 
 NER_MODEL = "Jean-Baptiste/camembert-ner"
 CLASSIFICATION_MODEL = "facebook/bart-large-mnli"
@@ -15,6 +16,7 @@ TEXT_GENERATION_MODEL = "EleutherAI/gpt-neo-125M"
 CLASSES = ["education", "politics", "business", "cryptocurrency"]
 
 config = load_config()
+logger = CustomLogger(__file__)
 
 
 class AI_Writer:
@@ -33,7 +35,7 @@ class AI_Writer:
             input=self.article, max_length=None, n_sentences=25
         )
         self.rewritten_article = rewritten_article
-        logging.info("Article rewritten")
+        logger.info("Article rewritten")
         return rewritten_article
 
     def rewrite_headline(self) -> str:
@@ -42,7 +44,7 @@ class AI_Writer:
             input=self.headline, max_length=None, n_sentences=1
         )
         self.rewritten_headline = rewritten_headline
-        logging.info("Headline rewritten")
+        logger.info("Headline rewritten")
         return rewritten_headline
 
     def detect_topic(self) -> None:
@@ -52,7 +54,7 @@ class AI_Writer:
         for ne in named_entities:
             if "PER" in ne.values():
                 if self.mode == "no_gcp":
-                    logging.info(
+                    logger.info(
                         f"Named entity `{ne['word']}` not looked up in GCP due to \
                             mode='no_gcp'"
                     )
@@ -65,11 +67,11 @@ class AI_Writer:
                         person=ne["word"], bucket_name="images"
                     ):
                         self.topic = ne["word"]
-                        logging.info(f"Named entity `{ne['word']}` found in GCP")
+                        logger.info(f"Named entity `{ne['word']}` found in GCP")
                         # TODO: set URI to self.uri
                         return ne["word"]
                     else:
-                        logging.warning(f"Named entity `{ne['word']}` not found in GCP")
+                        logger.warning(f"Named entity `{ne['word']}` not found in GCP")
                         continue
         # if no image of a person found or there is no person in named entities, \
         # detect a general topic of the article and return an image corrensponding to that
@@ -83,7 +85,7 @@ class AI_Writer:
         n_max = scores_list.index(max(scores_list))
         topic = result["labels"][n_max]
         self.topic = topic
-        logging.info(f"`topic` set to {topic}")
+        logger.info(f"`topic` set to {topic}")
         return topic
 
     def get_named_entities(self) -> list[dict]:
@@ -131,5 +133,5 @@ class AI_Writer:
             num_return_sequences=n_sentences,
             pad_token_id=generator.tokenizer.eos_token_id,
         )[0]["generated_text"]
-        logging.info("Text generated")
+        logger.info("Text generated")
         return generated_text
