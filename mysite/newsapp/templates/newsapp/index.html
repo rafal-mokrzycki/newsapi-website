@@ -1,0 +1,13 @@
+{% if latest_article_list %}
+    <ul>
+    {% for article in latest_article_list %}
+    <a href="{% url 'newsapp:detail' article.id %}">{{ article.headline }}</a>
+    <br>
+    <a href="{% url 'newsapp:detail' article.id %}">{{ article.uri }}</a>
+    <br>
+    <br>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No news are available.</p>
+{% endif %}
