@@ -19,12 +19,12 @@ class GCP_Handler:
         key_path: Path | None = None,
     ) -> None:
         if key_path is None:
-            self.key_path = config["key_path"]
+            self.key_path = config["gcp"]["key_path"]
         else:
             self.key_path = key_path
         self.storage_client = storage.Client.from_service_account_json(self.key_path)
-        self.project_name = config["project_name"]
-        self.location = config["location"]
+        self.project_name = config["gcp"]["project_name"]
+        self.location = config["gcp"]["location"]
 
     def create_bucket(
         self,
@@ -48,7 +48,7 @@ class GCP_Handler:
                 bucket = self.storage_client.bucket(bucket_name)
                 bucket.storage_class = storage_class
                 self.storage_client.create_bucket(bucket_name, location=location)
-                logging.info(f"Bucket {bucket_name} created")
+                logging.info(f"Bucket `{bucket_name}` created")
             except (BaseException, exceptions.Conflict):
                 # If the bucket already exists, ignore the 409 HTTP error and
                 # continue with the rest of the program.
@@ -72,7 +72,7 @@ class GCP_Handler:
             bucket = self.storage_client.get_bucket(bucket_name)
             bucket.delete()
         except exceptions.NotFound:
-            logging.error(f"Bucket {bucket_name} not found.")
+            logging.error(f"Bucket `{bucket_name}` not found.")
         except exceptions.Conflict:
             for blob in self.list_blobs_in_bucket(bucket_name):
                 self.delete_blob(bucket_name, blob)
@@ -102,7 +102,7 @@ class GCP_Handler:
         blob = bucket.blob(blob_name)
         try:
             blob.upload_from_string(input_text)
-            logging.info(f"String uploaded to gs://{bucket_name}/{blob_name}")
+            logging.info(f"String uploaded to `gs://{bucket_name}/{blob_name}`")
         except exceptions.GoogleCloudError as e:
             logging.error(e)
 

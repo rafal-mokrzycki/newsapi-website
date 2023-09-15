@@ -120,7 +120,7 @@ class BQ_Handler:
 
         logging.info(f"Table {table_ref.table_id} deleted.")
 
-    def append_data_frame_to_table(
+    def add_rows_to_table(
         self,
         *,
         dataset_name: str | None = None,
@@ -157,7 +157,7 @@ class BQ_Handler:
 
         logging.info(f"Data appended to table {table_ref.table_id}.")
 
-    def delete_record_by_url(
+    def delete_row_from_table(
         self,
         *,
         dataset_name: str | None = None,
@@ -172,7 +172,7 @@ class BQ_Handler:
             dataset_name (str | None, optional): Dataset name. Defaults to None. If None
             taken from config.
             table_name (str | None, optional): Table name. Defaults to None.
-            url (str | None, optional): URL (primary key)to delete record with.
+            url (str | None, optional): URL (primary key) to delete record with.
             Defaults to None.
 
         Raises:
