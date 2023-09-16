@@ -16,7 +16,7 @@ logger = CustomLogger(__file__)
 def main(mode):
     news_handler = NewsHandler()
     # 1. Get N newest articles (urls and headlines) (`news_handler.py`)
-    list_of_urls_and_headlines = news_handler.get_headlines_custom()
+    list_of_urls_and_headlines = news_handler.get_top_headlines()
     for element in list_of_urls_and_headlines:
         # TODO: check if url was already used
         pass

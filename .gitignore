@@ -134,3 +134,4 @@ config.json
 # developer's files
 maze.py
 api.key
+images/*

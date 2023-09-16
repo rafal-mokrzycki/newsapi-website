@@ -1,6 +1,12 @@
 """Validators for the funtionalities of the app."""
 import re
 
+import repackage
+
+repackage.up()
+
+from utils.const import DATE_RE, DATETIME_RE, MAX_LENGTH, MIN_LENGTH
+
 
 class Google:
     @staticmethod
@@ -16,8 +22,6 @@ class Google:
             bool: True if bucket name follows Google restraints, False
             otherwise.
         """
-        MAX_LENGTH = 63
-        MIN_LENGTH = 3
         forbidden_pattern = r"^g[oO0]{2}g(le)?[a-z0-9_\-]*[a-z0-9]?$"
         if len(bucket_name) > MAX_LENGTH or len(bucket_name) < MIN_LENGTH:
             return False
@@ -41,3 +45,19 @@ class Google:
         if re.match(valid_pattern, uri) is not None:
             return True
         return False
+
+
+class NewsHandlerValidator:
+    def is_valid_string(var):
+        return isinstance(var, str)
+
+    def validate_date_str(datestr):
+        if not DATE_RE.match(datestr):
+            raise ValueError("Date input should be in format of YYYY-MM-DD")
+
+    def validate_datetime_str(datetimestr):
+        if not DATETIME_RE.match(datetimestr):
+            raise ValueError("Datetime input should be in format of YYYY-MM-DDTHH:MM:SS")
+
+    def is_valid_num(var):
+        return isinstance(var, (int, float))

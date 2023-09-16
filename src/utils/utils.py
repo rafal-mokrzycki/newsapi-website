@@ -1,7 +1,44 @@
+from __future__ import unicode_literals
+
+import datetime
 import logging
 import random
 import time
 from functools import wraps
+
+import repackage
+
+repackage.up()
+from utils.const import DATE_FMT, DATE_LEN, DATETIME_FMT, DATETIME_LEN
+from utils.validators import NewsHandlerValidator
+
+__all__ = ("stringify_date_param",)
+
+
+def stringify_date_param(dt):
+    if NewsHandlerValidator.is_valid_string(dt):
+        if len(dt) == DATE_LEN:
+            NewsHandlerValidator.validate_date_str(dt)
+        elif len(dt) == DATETIME_LEN:
+            NewsHandlerValidator.validate_datetime_str(dt)
+        else:
+            raise ValueError(
+                "Date input should be in format of either YYYY-MM-DD \
+                    or YYYY-MM-DDTHH:MM:SS"
+            )
+        return dt
+    # Careful: datetime.datetime is subclass of datetime.date!
+    elif isinstance(dt, datetime.datetime):
+        # TODO: time zone
+        return dt.strftime(DATETIME_FMT)
+    elif isinstance(dt, datetime.date):
+        return dt.strftime(DATE_FMT)
+    elif NewsHandlerValidator.is_valid_num(dt):
+        return datetime.datetime.utcfromtimestamp(dt).strftime(DATETIME_FMT)
+    else:
+        raise TypeError(
+            "Date input must be one of: str, date, datetime, float, int, or None"
+        )
 
 
 class CustomLogger:

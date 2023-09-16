@@ -16,7 +16,11 @@ class Article(models.Model):
         return self.article_text
 
 
-# class Choice(models.Model):
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-#     choice_text = models.CharField(max_length=200)
-#     votes = models.IntegerField(default=0)
+# TODO: move it and make it work
+if __name__ == "__main__":
+    b = Article(
+        headline="This is a headline",
+        article_text="This is a text",
+        image=r"images\IMG_20170817_194613.jpg",
+    )
+    b.save()
