@@ -3,7 +3,15 @@ Change your models (in models.py).
 Run python manage.py makemigrations to create migrations for those changes
 Run python manage.py migrate to apply those changes to the database.
 """
+import sys
+
 from django.db import models
+
+print(sys.path)
+
+
+# TODO: add possibility to add photos from (1) Google Storage and (2) local files \
+# and a switch for them to be able to run locally and in cloud
 
 
 class Article(models.Model):

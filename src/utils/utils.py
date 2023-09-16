@@ -42,15 +42,14 @@ def stringify_date_param(dt):
 
 
 class CustomLogger:
-    # TODO: get rid of double logging
-
     def __init__(self, name):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.DEBUG)
+        self.logger.propagate = False
 
         # Create a custom formatter
         formatter = logging.Formatter(
-            fmt="%(asctime)s - %(name)s - %(levelname)s   %(message)s",
+            fmt="%(asctime)s : %(name)s : %(levelname)s : %(message)s",
         )
 
         # Create a console handler

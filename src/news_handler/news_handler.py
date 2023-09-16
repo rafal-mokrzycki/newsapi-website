@@ -46,6 +46,23 @@ class NewsHandler(object):
         else:
             self.request_method = session
 
+    @staticmethod
+    def customize_output(func):
+        """
+        Wrapper for get_top_headlines() and get_everything() for outputting only list
+        of tuples of url and title (=headline)
+        """
+
+        def wrapper(*args, **kwargs):
+            api_results = func(*args, **kwargs)
+            final_results = []
+            for result in api_results["articles"]:
+                final_results.append((result["url"], result["title"]))
+            return final_results
+
+        return wrapper
+
+    @customize_output
     def get_top_headlines(  # noqa: C901
         self,
         q: str | None = None,
@@ -210,6 +227,7 @@ class NewsHandler(object):
 
         return r.json()
 
+    @customize_output
     def get_everything(  # noqa: C901
         self,
         q: str | None = None,
@@ -470,22 +488,6 @@ class NewsHandler(object):
             raise NewsAPIException(r.json())
 
         return r.json()
-
-    @staticmethod
-    def customize_output(func):
-        """
-        Wrapper for get_top_headlines() and get_everything() for outputting only list
-        of tuples of url and title (=headline)
-        """
-
-        def wrapper(*args, **kwargs):
-            api_results = func(*args, **kwargs)
-            final_results = []
-            for result in api_results["articles"]:
-                final_results.append((result["url"], result["title"]))
-            return final_results
-
-        return wrapper
 
     @staticmethod
     def read_api_key(file_name: str = "api.key") -> str:

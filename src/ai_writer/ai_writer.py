@@ -1,5 +1,5 @@
-import logging
 import re
+from pathlib import Path
 
 import repackage
 from transformers import pipeline
@@ -16,7 +16,7 @@ TEXT_GENERATION_MODEL = "EleutherAI/gpt-neo-125M"
 CLASSES = ["education", "politics", "business", "cryptocurrency"]
 
 config = load_config()
-logger = CustomLogger(__file__)
+logger = CustomLogger(Path(__file__).name)
 
 
 class AI_Writer:
