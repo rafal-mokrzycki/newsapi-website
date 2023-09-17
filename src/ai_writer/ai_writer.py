@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import repackage
@@ -5,10 +6,9 @@ from nltk import tokenize
 from transformers import PegasusForConditionalGeneration, PegasusTokenizerFast, pipeline
 
 repackage.up()
-
 from config.config import load_config
 from gcp_handler.gcp_handler import GCP_Handler
-from src.utils.utils import CustomLogger
+from utils.utils import CustomLogger
 
 NER_MODEL = "Jean-Baptiste/camembert-ner"
 CLASSIFICATION_MODEL = "facebook/bart-large-mnli"
@@ -47,10 +47,8 @@ class AI_Writer:
         """Detects article topic and sets instance variable `topic`."""
         named_entities = self.get_named_entities()
         # if there is a named entity PERSON in an article, return their name
-        # TODO: change for gathering all NEs PERSON, compare any of them againt \
+        # TODO: change for gathering all NEs PERSON, compare any of them against \
         # Google Storage and only if none is found, try to find a general topic
-        # TODO: add filter Videos (if video found, omit)
-        # TODO: add filter for too short articles
         for ne in named_entities:
             if "PER" in ne.values():
                 if self.mode == "no_gcp":
@@ -111,7 +109,6 @@ class AI_Writer:
             str: Rewritten text.
         """
         # TODO: better model?
-        # TODO: add filter to remove sentences, where CNN appears
         model = PegasusForConditionalGeneration.from_pretrained(
             "tuner007/pegasus_paraphrase"
         )
@@ -119,6 +116,10 @@ class AI_Writer:
         sentences = tokenize.sent_tokenize(input_)
         rewritten_sentences = []
         for sentence in sentences:
+            # filter to remove sentences, where CNN appears
+            # TODO: what about headlines where there is only one sentence?
+            if Filter.contains_unwanted_keywords(string=sentence) is not None:
+                continue
             # tokenize the text to be form of a list of token IDs
             inputs = tokenizer(
                 [sentence], truncation=True, padding="longest", return_tensors="pt"
@@ -134,3 +135,37 @@ class AI_Writer:
                 tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
             )
         return " ".join([r_sentence for r_sentence in rewritten_sentences])
+
+
+class Filter:
+    def contains_pattern(pattern: str, string: str, flags: str | None = None) -> bool:
+        if flags is None:
+            flags = re.IGNORECASE
+        if re.search(pattern, string, flags):
+            return True
+        return False
+
+    def contains_video(string: str) -> bool:
+        if re.search(r"video", string, re.IGNORECASE):
+            return True
+        return False
+
+    def is_too_short_text(string: str) -> bool:
+        sentences = tokenize.sent_tokenize(string)
+        if len(sentences) < 3:
+            return True
+        return False
+
+    def contains_unwanted_keywords(
+        string: str, keywords: str | list[str] = "CNN"
+    ) -> list | None:
+        if isinstance(keywords, str):
+            if re.search(keywords, string, re.IGNORECASE):
+                return [keywords]
+            return None
+        elif isinstance(keywords, list):
+            unwanted = []
+            for keyword in keywords:
+                if re.search(keyword, string, re.IGNORECASE):
+                    unwanted.append(keyword)
+            return unwanted if unwanted else None

@@ -19,8 +19,10 @@ def get_original_article_text(url: str, headline: str, filter_: bool = True) -> 
     article = Article(url=url)
     article.download()
     article.parse()
-    logging.info("Article downloaded")
-    # TODO: action if download failed and article == ''
+    if article.text == "":
+        logging.error("Article not properly downloaded")
+    else:
+        logging.info("Article downloaded")
     if filter_:
         article_text = filter_text(article.text)
     else:

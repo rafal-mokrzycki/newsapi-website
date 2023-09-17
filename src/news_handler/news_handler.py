@@ -50,14 +50,14 @@ class NewsHandler(object):
     def customize_output(func):
         """
         Wrapper for get_top_headlines() and get_everything() for outputting only list
-        of tuples of url and title (=headline)
+        of tuples of url, title (=headline) and content (first couple of sentences)
         """
 
         def wrapper(*args, **kwargs):
             api_results = func(*args, **kwargs)
             final_results = []
             for result in api_results["articles"]:
-                final_results.append((result["url"], result["title"]))
+                final_results.append((result["url"], result["title"], result["content"]))
             return final_results
 
         return wrapper

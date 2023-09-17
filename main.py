@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.ai_writer.ai_writer import AI_Writer
+from src.ai_writer.ai_writer import AI_Writer, Filter
 from src.news_handler.news_handler import NewsHandler
 from src.parsers import article_parser
 from src.utils.utils import CustomLogger, wait_for_web_scraping
@@ -17,6 +17,11 @@ def main(mode):
     # 1. Get N newest articles (urls and headlines) (`news_handler.py`)
     list_of_urls_and_headlines = news_handler.get_top_headlines()
     for element in list_of_urls_and_headlines:
+        # filter out Videos: if 'content' from endpoint /top_headlines contains a video,
+        # omit this article
+        if Filter.contains_video(element[2]):
+            logger.warning(f"Text for `{element[0]}` Contains video. Omitted.")
+            continue
         # TODO: check if url was already used
         pass
         # 2a. Scrape given urls to get full article texts (`article_parser.py`)
@@ -24,6 +29,9 @@ def main(mode):
         headline, article = article_parser.get_original_article_text(
             element[0], element[1]
         )
+        if Filter.is_too_short_text(article.text):
+            logger.warning(f"Text for `{element[0]}` too short. Omitted.")
+            continue
         ai_writer = AI_Writer(headline=headline, article=article, mode=mode)
         # 3a. Rewrite articles and headlines (`ai_writer.py`)
         ai_writer.rewrite_headline()
