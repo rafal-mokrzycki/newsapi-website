@@ -233,7 +233,7 @@ class NewsHandler(object):
         q: str | None = None,
         qintitle: str | None = None,
         sources: str | None = None,
-        domains: str | None = None,
+        domains: str | None = "cnn",
         exclude_domains: str | None = None,
         from_param: str | datetime.datetime | datetime.date | int | float | None = None,
         to: str | datetime.datetime | datetime.date | int | float | None = None,

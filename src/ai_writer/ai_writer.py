@@ -1,8 +1,8 @@
-import re
 from pathlib import Path
 
 import repackage
-from transformers import pipeline
+from nltk import tokenize
+from transformers import PegasusForConditionalGeneration, PegasusTokenizerFast, pipeline
 
 repackage.up()
 
@@ -13,7 +13,7 @@ from src.utils.utils import CustomLogger
 NER_MODEL = "Jean-Baptiste/camembert-ner"
 CLASSIFICATION_MODEL = "facebook/bart-large-mnli"
 TEXT_GENERATION_MODEL = "EleutherAI/gpt-neo-125M"
-CLASSES = ["education", "politics", "business", "cryptocurrency"]
+CLASSES = ["education", "politics", "business", "cryptocurrency", "economy", "war"]
 
 config = load_config()
 logger = CustomLogger(Path(__file__).name)
@@ -31,18 +31,14 @@ class AI_Writer:
 
     def rewrite_article(self) -> str:
         """Rewrites an article and sets instance variable `rewritten_article`"""
-        rewritten_article = self.rewrite_text(
-            input=self.article, max_length=None, n_sentences=25
-        )
+        rewritten_article = self.rewrite_text(input_=self.article)
         self.rewritten_article = rewritten_article
         logger.info("Article rewritten")
         return rewritten_article
 
     def rewrite_headline(self) -> str:
         """Rewrites a headline and sets instance variable `rewritten_headline`"""
-        rewritten_headline = self.rewrite_text(
-            input=self.headline, max_length=None, n_sentences=1
-        )
+        rewritten_headline = self.rewrite_text(input_=self.headline)
         self.rewritten_headline = rewritten_headline
         logger.info("Headline rewritten")
         return rewritten_headline
@@ -51,6 +47,10 @@ class AI_Writer:
         """Detects article topic and sets instance variable `topic`."""
         named_entities = self.get_named_entities()
         # if there is a named entity PERSON in an article, return their name
+        # TODO: change for gathering all NEs PERSON, compare any of them againt \
+        # Google Storage and only if none is found, try to find a general topic
+        # TODO: add filter Videos (if video found, omit)
+        # TODO: add filter for too short articles
         for ne in named_entities:
             if "PER" in ne.values():
                 if self.mode == "no_gcp":
@@ -59,6 +59,7 @@ class AI_Writer:
                             mode='no_gcp'"
                     )
                     self.uri = "fake-uri"
+                    self.topic = ne["word"]
                     return ne["word"]
                 # if there is an image with this person in GCS return its URI
                 # else continue
@@ -73,6 +74,8 @@ class AI_Writer:
                     else:
                         logger.warning(f"Named entity `{ne['word']}` not found in GCP")
                         continue
+            else:
+                continue
         # if no image of a person found or there is no person in named entities, \
         # detect a general topic of the article and return an image corrensponding to that
         classifier = pipeline(task="zero-shot-classification", model=CLASSIFICATION_MODEL)
@@ -96,42 +99,38 @@ class AI_Writer:
 
     @staticmethod
     def rewrite_text(
-        input: str,
-        temperature=0.6,
-        max_length: int = None,
-        n_sentences: int = None,
-        task: str | None = None,
-        model: str | None = None,
+        input_: str, num_beams: int = 10, num_return_sequences: int = 10
     ) -> str:
         """
         Rewrites text.
 
         Args:
-            input (str): Text to rewrite.
-            temperature (float):
-            max_length (int, optional): Maximal length of the generated
-            text. Defaults to 256.
-            n_sentences (int, optional): Number of sentences to
-            generate. Defaults to 1.
+            input_ (str): Text to rewrite.
 
         Returns:
             str: Rewritten text.
         """
-        # TODO: check another library
-        # TODO: check another model
-        number_of_tokens = len(re.findall(r"\b", input)) // 2
-        max_length = number_of_tokens * 1.5 if max_length is None else max_length
-        task = "text-generation" if task is None else task
-        model = TEXT_GENERATION_MODEL if model is None else model
-        generator = pipeline(task, model=model)
-        generated_text = generator(
-            input,
-            do_sample=True,
-            top_k=50,
-            temperature=temperature,
-            max_length=max_length,
-            num_return_sequences=n_sentences,
-            pad_token_id=generator.tokenizer.eos_token_id,
-        )[0]["generated_text"]
-        logger.info("Text generated")
-        return generated_text
+        # TODO: better model?
+        # TODO: add filter to remove sentences, where CNN appears
+        model = PegasusForConditionalGeneration.from_pretrained(
+            "tuner007/pegasus_paraphrase"
+        )
+        tokenizer = PegasusTokenizerFast.from_pretrained("tuner007/pegasus_paraphrase")
+        sentences = tokenize.sent_tokenize(input_)
+        rewritten_sentences = []
+        for sentence in sentences:
+            # tokenize the text to be form of a list of token IDs
+            inputs = tokenizer(
+                [sentence], truncation=True, padding="longest", return_tensors="pt"
+            )
+            # generate the paraphrased sentences
+            outputs = model.generate(
+                **inputs,
+                num_beams=num_beams,
+                num_return_sequences=num_return_sequences,
+            )
+            # decode the generated sentences using the tokenizer to get them back to text
+            rewritten_sentences.append(
+                tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+            )
+        return " ".join([r_sentence for r_sentence in rewritten_sentences])

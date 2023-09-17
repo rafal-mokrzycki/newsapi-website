@@ -135,3 +135,4 @@ config.json
 maze.py
 api.key
 images/*
+article_*.txt

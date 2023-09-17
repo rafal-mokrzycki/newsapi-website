@@ -37,7 +37,7 @@ class GCP_Handler:
 
         Args:
             bucket_name (str): new bucket name.
-            storage_class (str): storage class.
+            storage_class (str): storage class. Defaults to 'STANDARD'.
             location (str | None): bucket location. If None - taken from the config.json.
             Defaults to None.
         """
@@ -88,7 +88,7 @@ class GCP_Handler:
         return [bucket.name for bucket in buckets]
 
     def write_blob_to_bucket(
-        self, input_text: str, bucket_name: str, prefix=str, blob_name=str
+        self, input_text: str, bucket_name: str, prefix: str, blob_name: str
     ) -> None:
         """
         Writes a string into a blob in a bucket.
@@ -96,6 +96,8 @@ class GCP_Handler:
         Args:
             input_text (str): String to write into a bucket.
             bucket_name (str): Bucket to write a string to.
+            prefix (str): Prefix ("folder" name).
+            blob_name (str): Blob name ("file" name).
         """
         bucket = self.storage_client.bucket(bucket_name)
         blob_name = f"gs://images/{prefix}/{blob_name}"
@@ -111,7 +113,7 @@ class GCP_Handler:
         Reads a string-like blob from bucket.
 
         Args:
-            uri (str): URI to read string from
+            uri (str): URI to read string from.
 
         Returns:
             str: String.

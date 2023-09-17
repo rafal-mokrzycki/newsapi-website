@@ -9,8 +9,9 @@ def get_original_article_text(url: str, headline: str, filter_: bool = True) -> 
     Gets article text.
 
     Args:
-        url str: Article URL.
-        headline str: Original headline.
+        url (str): Article URL.
+        headline (str): Original headline.
+        filter_ (bool): Whether to apply a filter or not.
 
     Returns:
         str: Headline and original article text (filtered).
@@ -19,6 +20,7 @@ def get_original_article_text(url: str, headline: str, filter_: bool = True) -> 
     article.download()
     article.parse()
     logging.info("Article downloaded")
+    # TODO: action if download failed and article == ''
     if filter_:
         article_text = filter_text(article.text)
     else:
