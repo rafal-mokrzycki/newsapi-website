@@ -203,6 +203,24 @@ class GCP_Handler:
             return True
         return False
 
+    def get_random_image_of_person(
+        self, bucket_name: str, list_of_persons: list[str]
+    ) -> str | None:
+        """Returns a random URI of an image of a person from `list_of_persons`.
+        If image for a person not found, returns None."""
+        list_of_persons_uris = []
+        for person in list_of_persons:
+            if self.is_person_in_gcs(person, bucket_name):
+                person_snake_case = person.lower().replace(
+                    " ", "_"
+                )  # Donald Trump -> donald_trump
+                prefix = f"{person_snake_case}/"
+                list_of_found_uris_for_person = self.list_blobs_in_bucket_with_prefix(
+                    bucket_name, prefix
+                )
+                list_of_persons_uris.extend(list_of_found_uris_for_person)
+        return random.choice(list_of_persons_uris)
+
     @staticmethod
     def get_bucket_and_blob_from_uri(uri: str) -> str:
         """

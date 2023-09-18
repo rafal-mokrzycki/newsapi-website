@@ -12,6 +12,8 @@ MODES = ["no_gcp"]  # used for running app without GCP access
 logger = CustomLogger(Path(__file__).name)
 
 
+# TODO: apply changes from maze.py
+# TODO: check why named entities are lowercase
 def main(mode):
     news_handler = NewsHandler()
     # 1. Get N newest articles (urls and headlines) (`news_handler.py`)
