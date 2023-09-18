@@ -4,8 +4,8 @@ from .models import Article
 
 
 def index(request):
-    latest_article_list = Article.objects.order_by("-pub_date")[:5]
-    recently_added_article_list = Article.objects.order_by("-pub_date")[5:10]
+    latest_article_list = Article.objects.order_by("-pub_date")[:6]
+    recently_added_article_list = Article.objects.order_by("-pub_date")[6:10]
     context = {
         "latest_article_list": latest_article_list,
         "recently_added_article_list": recently_added_article_list,

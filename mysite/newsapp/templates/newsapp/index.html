@@ -88,132 +88,115 @@
     <!-- end header section -->
   </div>
 
-
+<!-- TODO: add share on Fb, Whatsapp, Linkedin -->
   <!-- news section -->
-
+<main>
   <section class="news_section layout_padding">
     <div class="container">
-      <div class="d-flex flex-column align-items-end">
-        <div class="custom_heading-container">
-          <hr>
-          <h2>
-            Latest News
-          </h2>
-
+      <div class="row">
+        <div class="col-9">
+            <div class="d-flex flex-column align-items-end">
+              <div class="custom_heading-container">
+                <hr>
+                <h2>
+                  Latest News
+                </h2>
+              </div>
+            </div>
+          <div class="row">
+            {% for article in latest_article_list %}
+              <div class="col-md-4">
+                <div class="box">
+                  <div class="img-box full-image">
+                    <a href="{% url 'newsapp:detail' article.id %}">
+                    <img src="{{ article.image.url }}" alt="">
+                    </a>
+                  </div>
+                  <div class="action-box">
+                    <div class="action">
+                      <a href="">
+                        <img src="{% static '/newsapp/images/like.png' %}" alt="">
+                      </a>
+                      <a href="">
+                        <img src="{% static '/newsapp/images/comment.png' %}" alt="">
+                      </a>
+                      <a href="">
+                        <img src="{% static '/newsapp/images/share.png' %}" alt="">
+                      </a>
+                    </div>
+                  </div>
+                  <div class="detail-box">
+                    <h4>
+                      <a href="{% url 'newsapp:detail' article.id %}">
+                      {{ article.headline }}
+                      </a>
+                    </h4>
+                    <!-- <p>
+                      It is a long established fact that a reader will be distracted by the readable content of a page when
+                      looking at its layout. The point of using Lorem
+                    </p>
+                    <div>
+                      <a href="">
+                        Read More
+                      </a>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
         </div>
-
+        <div class="col-3">
+        <div class="d-flex flex-column align-items-end">
+          <div class="custom_heading-container">
+            <hr>
+            <h2>
+              Recently added
+            </h2>
+          </div>
+        </div>
       </div>
       <div class="row">
-        <div class="col-md-4">
-          <div class="box">
-            <div class="img-box">
-              <img src="{% static '/newsapp/images/n-1.jpg' %}" alt="">
-            </div>
-            <div class="action-box">
-              <div class="action">
-                <a href="">
-                  <img src="{% static '/newsapp/images/like.png' %}" alt="">
-                </a>
-                <a href="">
-                  <img src="{% static '/newsapp/images/comment.png' %}" alt="">
-                </a>
-                <a href="">
-                  <img src="{% static '/newsapp/images/share.png' %}" alt="">
+        {% for article in recently_added_article_list %}
+          <div class="col-md-4">
+            <div class="box">
+              <div class="img-box small-image">
+                <a href="{% url 'newsapp:detail' article.id %}">
+                <img src="{{ article.image.url }}" alt="">
                 </a>
               </div>
-            </div>
-            <div class="detail-box">
-              <h4>
-                elements good design
-              </h4>
-              <p>
-                It is a long established fact that a reader will be distracted by the readable content of a page when
-                looking at its layout. The point of using Lorem
-              </p>
-              <div>
-                <a href="">
-                  Read More
-                </a>
+              <div class="action-box">
+                <div class="action">
+                  <a href="">
+                    <img src="{% static '/newsapp/images/like.png' %}" alt="">
+                  </a>
+                  <a href="">
+                    <img src="{% static '/newsapp/images/comment.png' %}" alt="">
+                  </a>
+                  <a href="">
+                    <img src="{% static '/newsapp/images/share.png' %}" alt="">
+                  </a>
+                </div>
+              </div>
+              <div class="detail-box">
+                <h4>
+                  <a href="{% url 'newsapp:detail' article.id %}">
+                  {{ article.headline }}
+                  </a>
+                </h4>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="box">
-            <div class="img-box">
-              <img src="{% static '/newsapp/images/n-2.jpg' %}" alt="">
-            </div>
-            <div class="action-box">
-              <div class="action">
-                <a href="">
-                  <img src="{% static '/newsapp/images/like.png' %}" alt="">
-                </a>
-                <a href="">
-                  <img src="{% static '/newsapp/images/comment.png' %}" alt="">
-                </a>
-                <a href="">
-                  <img src="{% static '/newsapp/images/share.png' %}" alt="">
-                </a>
-              </div>
-            </div>
-            <div class="detail-box">
-              <h4>
-                elements good design
-              </h4>
-              <p>
-                It is a long established fact that a reader will be distracted by the readable content of a page when
-                looking at its layout. The point of using Lorem
-              </p>
-              <div>
-                <a href="">
-                  Read More
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="box">
-            <div class="img-box">
-              <img src="{% static '/newsapp/images/n-3.png' %}" alt="">
-            </div>
-            <div class="action-box">
-              <div class="action">
-                <a href="">
-                  <img src="{% static '/newsapp/images/like.png' %}" alt="">
-                </a>
-                <a href="">
-                  <img src="{% static '/newsapp/images/comment.png' %}" alt="">
-                </a>
-                <a href="">
-                  <img src="{% static '/newsapp/images/share.png' %}" alt="">
-                </a>
-              </div>
-            </div>
-            <div class="detail-box">
-              <h4>
-                elements good design
-              </h4>
-              <p>
-                It is a long established fact that a reader will be distracted by the readable content of a page when
-                looking at its layout. The point of using Lorem
-              </p>
-              <div>
-                <a href="">
-                  Read More
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </section>
-
+</main>
   <!-- end news section -->
 
 
   <!-- info section -->
+<footer>
   <section class="info_section layout_padding">
     <div class="container">
       <div class="info_social">
@@ -260,7 +243,7 @@
 
   <script type="text/javascript" src="{% static '/newsapp/js/jquery-3.4.1.min.js' %}"></script>
   <script type="text/javascript" src="{% static '/newsapp/js/bootstrap.js' %}"></script>
-
+</footer>
 </body>
 </body>
 
