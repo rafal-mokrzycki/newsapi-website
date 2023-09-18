@@ -1,3 +1,5 @@
+{% load static %}
+{% load newsapp_extras %}
 <h1>{{ article.headline }}</h1>
 <p>{{ article.article_text }}</p>
 <img src="{{ article.image.url }}" class="img-responsive" width="400" height="150">

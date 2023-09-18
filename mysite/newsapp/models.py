@@ -3,15 +3,17 @@ Change your models (in models.py).
 Run python manage.py makemigrations to create migrations for those changes
 Run python manage.py migrate to apply those changes to the database.
 """
-import sys
-
+from django import template
 from django.db import models
 
-print(sys.path)
+register = template.Library()
 
 
 # TODO: add possibility to add photos from (1) Google Storage and (2) local files \
 # and a switch for them to be able to run locally and in cloud
+# TODO: add publication date
+# TODO: add author(s) to each article
+# TODO: add topic to each article, so that there are links between them
 
 
 class Article(models.Model):

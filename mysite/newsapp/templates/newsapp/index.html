@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   {% load static %}
+  {% load newsapp_extras %}
+
 <head>
   <!-- Basic -->
   <meta charset="utf-8" />
@@ -94,7 +96,7 @@
   <section class="news_section layout_padding">
     <div class="container">
       <div class="row">
-        <div class="col-9">
+        <div class="col-sm-9">
             <div class="d-flex flex-column align-items-end">
               <div class="custom_heading-container">
                 <hr>
@@ -105,7 +107,7 @@
             </div>
           <div class="row">
             {% for article in latest_article_list %}
-              <div class="col-md-4">
+              <div class="col-sm-4">
                 <div class="box">
                   <div class="img-box full-image">
                     <a href="{% url 'newsapp:detail' article.id %}">
@@ -126,6 +128,8 @@
                     </div>
                   </div>
                   <div class="detail-box">
+                    <!-- TODO: move published date to detail view -->
+                    <p>Published {{ article.pub_date|myDate }}</p>
                     <h4>
                       <a href="{% url 'newsapp:detail' article.id %}">
                       {{ article.headline }}
@@ -146,54 +150,59 @@
             {% endfor %}
           </div>
         </div>
-        <div class="col-3">
-        <div class="d-flex flex-column align-items-end">
-          <div class="custom_heading-container">
-            <hr>
-            <h2>
-              Recently added
-            </h2>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        {% for article in recently_added_article_list %}
-          <div class="col-md-4">
-            <div class="box">
-              <div class="img-box small-image">
-                <a href="{% url 'newsapp:detail' article.id %}">
-                <img src="{{ article.image.url }}" alt="">
-                </a>
-              </div>
-              <div class="action-box">
-                <div class="action">
-                  <a href="">
-                    <img src="{% static '/newsapp/images/like.png' %}" alt="">
-                  </a>
-                  <a href="">
-                    <img src="{% static '/newsapp/images/comment.png' %}" alt="">
-                  </a>
-                  <a href="">
-                    <img src="{% static '/newsapp/images/share.png' %}" alt="">
-                  </a>
-                </div>
-              </div>
-              <div class="detail-box">
-                <h4>
-                  <a href="{% url 'newsapp:detail' article.id %}">
-                  {{ article.headline }}
-                  </a>
-                </h4>
-              </div>
+        <div class="col-sm-3">
+          <div class="d-flex flex-column align-items-end">
+            <div class="custom_heading-container">
+              <hr>
+              <h2>
+                Recently added
+              </h2>
             </div>
           </div>
-        {% endfor %}
+          <div class="row">
+            {% for article in recently_added_article_list %}
+              <div class="col-sm-12">
+                <div class="box">
+                  <!-- <div class="img-box full-image">
+                    <a href="{% url 'newsapp:detail' article.id %}">
+                      <img src="{{ article.image.url }}" alt="">
+                    </a>
+                  </div> -->
+                  <!-- <div class="action-box">
+                    <div class="action">
+                      <a href="">
+                        <img src="{% static '/newsapp/images/like.png' %}" alt="">
+                      </a>
+                      <a href="">
+                        <img src="{% static '/newsapp/images/comment.png' %}" alt="">
+                      </a>
+                      <a href="">
+                        <img src="{% static '/newsapp/images/share.png' %}" alt="">
+                      </a>
+                    </div>
+                  </div> -->
+                  <div class="detail-box">
+                    <h6>
+                      <a href="{% url 'newsapp:detail' article.id %}">
+                      {{ article.headline }}
+                      </a>
+                    </h6>
+                  </div>
+                  <hr>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
       </div>
     </div>
   </section>
 </main>
   <!-- end news section -->
 
+<!-- TODO: make first article in 'recently added' with a photo, others without -->
+<!-- TODO: add advert below 'recently added' -->
+<!-- TODO: change 'recently added' into sth better -->
+<!-- TODO: remove horizontal line near to LATEST NEWS  -->
 
   <!-- info section -->
 <footer>
