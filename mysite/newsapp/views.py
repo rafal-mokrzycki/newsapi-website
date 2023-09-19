@@ -19,6 +19,18 @@ def index(request):
 
 
 def detail(request, article_id):
+    index_1 = NUM_OF_LATEST_NEWS
+    index_2 = NUM_OF_LATEST_NEWS + NUM_OF_RECENTLY_ADDED
     article = get_object_or_404(Article, pk=article_id)
     image = article.image
-    return render(request, "newsapp/detail.html", {"article": article, "image": image})
+    recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
+
+    return render(
+        request,
+        "newsapp/detail.html",
+        {
+            "article": article,
+            "image": image,
+            "recently_added_article_list": recently_added_article_list,
+        },
+    )

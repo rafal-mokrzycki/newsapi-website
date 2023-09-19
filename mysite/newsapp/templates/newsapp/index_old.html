@@ -31,7 +31,7 @@
         </section>
 
         <section class="older-articles">
-            <h2>Recently added</h2>
+            <h2>May also interest you</h2>
             <div class="article-list">
                 {% for article in recently_added_article_list %}
                 <a href="{% url 'newsapp:detail' article.id %}">{{ article.headline }}</a>

@@ -1,5 +1,239 @@
-{% load static %}
-{% load newsapp_extras %}
-<h1>{{ article.headline }}</h1>
-<p>{{ article.article_text }}</p>
-<img src="{{ article.image.url }}" class="img-responsive" width="400" height="150">
+<!DOCTYPE html>
+<html>
+  {% load static %}
+  {% load newsapp_extras %}
+  <head>
+    <!-- Basic -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Site Metas -->
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>News Portal</title>
+    <!-- slider stylesheet -->
+    <link rel="stylesheet" type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'newsapp/css/bootstrap.css' %}" />
+    <!-- fonts style -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Roboto:400,700&display=swap" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'newsapp/css/style.css' %}" rel="stylesheet" />
+    <!-- responsive style -->
+    <link href="{% static 'newsapp/css/responsive.css' %}" rel="stylesheet" />
+  </head>
+  <body class="sub_page">
+    <div class="hero_area">
+      <!-- header section strats -->
+      <header class="header_section">
+        <div class="container-fluid">
+          <nav class="navbar navbar-expand-lg custom_nav-container ">
+            <a class="navbar-brand" href="index.html">
+              <!-- <img src="static/newsapp/images/logo.png" alt=""> -->
+              <img src="{% static 'newsapp/images/logo.png' %}" alt="My image">
+              <span>
+              News Portal
+              </span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                <ul class="navbar-nav  ">
+                  <li class="nav-item active">
+                    <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="about.html">About </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="service.html">Services </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="portfolio.html"> Portfolio</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="news.html"> news </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="contact.html">Contact us</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="quote_btn-container  d-flex justify-content-center">
+                <a href="">
+                <img src="{% static 'newsapp/images/call.png' %}" alt="">
+                CALL : +01 1234567890
+                </a>
+                <a href="">
+                <span>
+                @
+                </span>
+                demo@gmail.com
+                </a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+      <!-- end header section -->
+    </div>
+    <!-- TODO: add share on Fb, Whatsapp, Linkedin -->
+    <!-- news section -->
+    <main>
+      <section class="news_section layout_padding">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8">
+              <div class="d-flex flex-column align-items-end">
+                <div class="custom_heading-container">
+                    <h2>
+                    {{ article.headline }}
+                    </h2>
+                </div>
+                <div class="box">
+                  <div class="img-box full-image">
+                    <a href="{% url 'newsapp:detail' article.id %}">
+                    <img src="{{ article.image.url }}" alt="">
+                    </a>
+                  </div>
+                </div>
+                </div>
+                <p>Published: {{ article.pub_date|myDate }}</p>
+                <p>Author: <a href="">{{ article.author }}</a></p>
+                <!-- <div class="box"> -->
+        <!-- <div class="action-box">
+          <div class="action">
+            <a href="">
+            <img src="{% static '/newsapp/images/like.png' %}" alt="">
+            </a>
+            <a href="">
+            <img src="{% static '/newsapp/images/comment.png' %}" alt="">
+            </a>
+            <a href="">
+            <img src="{% static '/newsapp/images/share.png' %}" alt="">
+            </a>
+          </div>
+          </div> -->
+        <div class="action-box">
+          <div class="action">
+            <!-- Facebook -->
+            <a href="">
+            <img src="{% static 'newsapp/images/fb.png' %}"  >
+            </a>
+            <!-- Twitter -->
+            <a href="">
+            <img src="{% static 'newsapp/images/twitter.png' %}"  >
+            </a>
+            <!-- Whatsapp -->
+            <!-- Email -->
+            <a class="social-share__share" href="mailto:?subject=NewsPortal%20content%20share&amp;body=Check%20out%20this%20article%3A%0Ahttps%3A%2F%2Fwww.newsportal.com%2F2023%2F09%2F19%2Fchina%2Fchina-germany-xi-dictator-intl-hnk" data-type="email" target="_blank" rel="noopener noreferrer" aria-label="share with email" title="Share with email"></a>
+            <a href="">
+            <img src="{% static 'newsapp/images/envelope.png' %}"  >
+            </a>
+            <!-- Link -->
+            <a href="">
+            <img src="{% static 'newsapp/images/link.png' %}"  >
+            </a>
+          </div>
+        </div>
+        <!-- </div> -->
+        <p>{{ article.article_text }}</p>
+        <p>{{ article.article_text }}</p>
+        <p></p>
+        <p></p>
+        <p></p>
+        <p>{{ article.article_text }}</p>
+      </div>
+      <div class="col-sm-4">
+        <div class="d-flex flex-column align-items-end">
+          <div class="custom_heading-container">
+            <h2>
+              May also interest you
+            </h2>
+          </div>
+        </div>
+        <div>
+            <!-- add advert here -->
+        </div>
+        <div class="row">
+          {% for article in recently_added_article_list %}
+          <div class="col-sm-12">
+            <div class="recent-news-box">
+              <!-- <div class="img-box full-image">
+                <a href="{% url 'newsapp:detail' article.id %}">
+                <img src="{{ article.image.url }}" alt="">
+                </a>
+                </div> -->
+              <!-- <div class="action-box">
+                <div class="action">
+                <a href="">
+                    <img src="{% static '/newsapp/images/like.png' %}" alt="">
+                </a>
+                <a href="">
+                    <img src="{% static '/newsapp/images/comment.png' %}" alt="">
+                </a>
+                <a href="">
+                    <img src="{% static '/newsapp/images/share.png' %}" alt="">
+                </a>
+                </div>
+                </div> -->
+              <div class="detail-box">
+                <h6>
+                  <a href="{% url 'newsapp:detail' article.id %}">
+                  {{ article.headline }}
+                  </a>
+                </h6>
+                <hr>
+            </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    </main>
+    <!-- info section -->
+    <footer>
+      <section class="info_section layout_padding">
+        <div class="container">
+          <div class="info_social">
+            <div>
+              <a href="">
+              <img src="{% static '/newsapp/images/fb.png' %}" alt="">
+              </a>
+            </div>
+            <div>
+              <a href="">
+              <img src="{% static '/newsapp/images/twitter.png' %}" alt="">
+              </a>
+            </div>
+            <div>
+              <a href="">
+              <img src="{% static '/newsapp/images/linkedin.png' %}" alt="">
+              </a>
+            </div>
+            <div>
+              <a href="">
+              <img src="{% static '/newsapp/images/insta.png' %}" alt="">
+              </a>
+            </div>
+          </div>
+          <div>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+              magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+            </p>
+          </div>
+        </div>
+      </section>
+      <script type="text/javascript" src="{% static '/newsapp/js/jquery-3.4.1.min.js' %}"></script>
+      <script type="text/javascript" src="{% static '/newsapp/js/bootstrap.js' %}"></script>
+    </footer>
+  </body>
+</html>

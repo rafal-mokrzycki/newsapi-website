@@ -40,6 +40,9 @@ class AI_Writer:
     def rewrite_headline(self) -> str:
         """Rewrites a headline and sets instance variable `rewritten_headline`"""
         rewritten_headline = self.rewrite_text(input_=self.headline)
+        # remove comma at the end of a headline
+        if rewritten_headline.endswith("."):
+            rewritten_headline = rewritten_headline[-1]
         self.rewritten_headline = rewritten_headline
         logger.info("Headline rewritten")
         return rewritten_headline
