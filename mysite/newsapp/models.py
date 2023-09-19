@@ -5,7 +5,6 @@ Run python manage.py migrate to apply those changes to the database.
 """
 from django import template
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
 

@@ -4,9 +4,9 @@ from pathlib import Path
 import repackage
 import requests
 
+from config.config import load_config
 from news_handler.exception import NewsAPIException
 
-from ..config.config import load_config
 from .news_auth import NewsApiAuth
 
 # from newsapi.newsapi_exception import NewsAPIException

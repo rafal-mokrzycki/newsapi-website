@@ -106,3 +106,30 @@ def timer(func):
 
 def wait_for_web_scraping():
     time.sleep(random.randint(5, 10))
+
+
+def get_actual_named_entities():
+    from tqdm.auto import tqdm
+
+    from ai_writer.ai_writer import AI_Writer
+    from news_handler.news_handler import NewsHandler
+    from parsers.article_parser import get_original_article_text
+
+    news_handler = NewsHandler()
+    news = news_handler.get_top_headlines(page=1, page_size=15)
+    list_of_actual_named_entities = []
+    for new in tqdm(news):
+        headline, article = get_original_article_text(new[0], new[1])
+        ai_writer = AI_Writer(headline, article)
+        ne_list = ai_writer.get_named_entities()
+        ne_person_list = ai_writer.get_named_entities_person(ne_list)
+        for person in tqdm(ne_person_list):
+            list_of_actual_named_entities.append(person)
+        wait_for_web_scraping()
+    with open("list_of_actual_named_entities.txt", "a+") as file:
+        for ne in set(list_of_actual_named_entities):
+            file.write(f"{ne}\n")
+
+
+if __name__ == "__main__":
+    get_actual_named_entities()
