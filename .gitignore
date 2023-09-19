@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# config
+config.json
+
+# developer's files
+maze.py
+api.key
+images/*
+article_*.txt
