@@ -176,10 +176,7 @@ class AI_Writer:
     def add_html_advertisment(
         filtered_rewritten_sentences: list[str] | None = None,
     ) -> list[str]:
-        html_code = """
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5880797269971404"
-     crossorigin="anonymous"></script>
-     """
+        html_code = """"""
         if filtered_rewritten_sentences is None:
             raise ValueError("filtered_rewritten_sentences cannot be None")
         filtered_rewritten_sentences_length = len(filtered_rewritten_sentences)
@@ -234,10 +231,12 @@ class AI_Writer:
                 tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
             )
         # filter to replace 'CNN' with 'media'
-        filtered_rewritten_sentences = [
-            Filter.replace_unwanted_keywords(r_sentence).capitalize()
-            for r_sentence in rewritten_sentences
-        ]
+        filtered_rewritten_sentences = []
+        for r_sentence in rewritten_sentences:
+            filtered_r_sentence = Filter.replace_unwanted_keywords(r_sentence)
+            filtered_rewritten_sentences.append(
+                f"{filtered_r_sentence[0].upper()}{filtered_r_sentence[1:]}"
+            )
         filtered_rewritten_sentences_with_advertisement = AI_Writer.add_html_advertisment(
             filtered_rewritten_sentences
         )
@@ -270,3 +269,22 @@ class Filter:
             if re.search(key, string, re.IGNORECASE):
                 string.replace(key, value)
         return string
+
+
+if __name__ == "__main__":
+    text = """
+
+China wooed a number of top Western companies on Monday with renewed promises to open up its financial industry and create a more welcoming environment as Beijing tries to reverse a record low in foreign investment in the face of mounting economic challenges.
+
+Pan Gongsheng, governor of the People’s Bank of China (PBOC) and head of the country’s foreign exchange regulator, chaired a symposium with representatives from foreign companies, including JP Morgan, Tesla (TSLA), HSBC (HSBC), Deutsche Bank (DB), BNP Paribas, Japan’s MUFG Bank, German chemical producer BASF, commodities trader Trafigura and Schneider Electric, according to a statement posted on the websites of the PBOC and the State Administration of Foreign Exchange (SAFE).
+
+The symposium was intended to “increase financial support to help stabilize foreign trade and foreign investment” and improve the “investment environment” for foreign business, the statement said.
+
+Foreign companies and investors have grown wary of rising risks in the world’s second largest economy, including a worsening slowdown marked by weak domestic demand and a housing crisis, Beijing’s desire to prioritize national security over economic growth and deteriorating relations between China and many Western countries.
+
+In the first eight months of this year, foreign direct investment (FDI) into China fell 5.1% from a year ago, according to data released by China’s commerce ministry on Sunday. A separate measure for foreign investment painted a grimmer picture.
+
+Direct investment liabilities, a measure of FDI reflected in a country’s balance of payments, fell to just $4.9 billion in the April to June months, down 87% from a year earlier, according to data published by SAFE last month. That was the lowest amount in any quarter since records began in 1998.
+   """
+    ai_writer = AI_Writer("", "")
+    print(ai_writer.rewrite_text(input_=text))
