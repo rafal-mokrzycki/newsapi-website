@@ -6,7 +6,6 @@ from src.parsers import article_parser
 from src.utils.utils import CustomLogger, wait_for_web_scraping
 
 LIMIT = 1
-MODES = ["no_gcp"]  # used for running app without GCP access
 
 
 logger = CustomLogger(Path(__file__).name)
@@ -62,4 +61,5 @@ def main(mode):
 
 
 if __name__ == "__main__":
-    main(mode="no_gcp")
+    main(mode="local")
+

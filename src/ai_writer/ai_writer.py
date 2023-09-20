@@ -1,3 +1,4 @@
+import os
 import random
 import re
 from pathlib import Path
@@ -14,20 +15,23 @@ from utils.utils import CustomLogger
 NER_MODEL = "Jean-Baptiste/camembert-ner"
 CLASSIFICATION_MODEL = "facebook/bart-large-mnli"
 TEXT_GENERATION_MODEL = "EleutherAI/gpt-neo-125M"
-CLASSES = ["education", "politics", "business", "cryptocurrency", "economy", "war"]
+CLASSES = ["politics", "business", "economy"]
 
 config = load_config()
 logger = CustomLogger(Path(__file__).name)
 
 
 class AI_Writer:
-    def __init__(self, headline: str, article: str, mode: str = "no_gcp") -> None:
+    def __init__(self, headline: str, article: str, mode: str = "local") -> None:
+        if mode.lower() not in config["django"]["modes"]:
+            raise ValueError(f'mode must be one of {config["django"]["modes"]}')
         self.headline = headline
         self.article = article
         self.rewritten_headline = None
         self.rewritten_article = None
         self.topic = None
         self.uri = None
+        self.author = random.choice(config["django"]["authors"])
         self.mode = mode
 
     def rewrite_article(self) -> str:
@@ -42,7 +46,7 @@ class AI_Writer:
         rewritten_headline = self.rewrite_text(input_=self.headline)
         # remove comma at the end of a headline
         if rewritten_headline.endswith("."):
-            rewritten_headline = rewritten_headline[-1]
+            rewritten_headline = rewritten_headline[:-1]
         self.rewritten_headline = rewritten_headline
         logger.info("Headline rewritten")
         return rewritten_headline
@@ -63,16 +67,24 @@ class AI_Writer:
             # detect general topic of the article
             self.classify_article_to_topic()
         else:
-            if self.mode == "no_gcp":
+            if self.mode == "local":
                 # If the access to GCP is unabled assign PER named entity as a topic
-                logger.info(
-                    "Named entities not looked up in GCP due to \
-                        mode='no_gcp'"
+                self.classify_article_to_topic()
+                image_path = self.get_random_image_of_person(
+                    list_of_persons=per_named_entitites
                 )
-                topic = random.choice(per_named_entitites)
-                self.uri = "fake-uri"
-                self.topic = topic
-                return topic
+                logger.info(
+                    "Named entities looked up locally due to \
+                        mode='local'"
+                )
+                if image_path is not None:
+                    self.uri = f"images/{image_path}"
+                else:
+                    # if image for any person not found, get image for a topic
+                    image_path = self.get_random_image_of_person(
+                        list_of_persons=[self.topic]
+                    )
+                    self.uri = f"images/{image_path}"
             else:
                 image_uri = GCP_Handler().get_random_image_of_person(
                     bucket_name="images", list_of_persons=per_named_entitites
@@ -88,49 +100,6 @@ class AI_Writer:
                     # Otherwise, assing image URI found in GCP as self.uri
                     self.uri = image_uri
                     logger.info("Named entities found in GCP")
-
-    # def detect_topic(self) -> None:
-    #     """Detects article topic and sets instance variable `topic`."""
-    #     named_entities = self.get_named_entities()
-    #     # if there is a named entity PERSON in an article, return their name
-    #     for ne in named_entities:
-    #         if "PER" in ne.values():
-    #             if self.mode == "no_gcp":
-    #                 logger.info(
-    #                     f"Named entity `{ne['word']}` not looked up in GCP due to \
-    #                         mode='no_gcp'"
-    #                 )
-    #                 self.uri = "fake-uri"
-    #                 self.topic = ne["word"]
-    #                 return ne["word"]
-    #             # if there is an image with this person in GCS return its URI
-    #             # else continue
-    #             else:
-    #                 if GCP_Handler().is_person_in_gcs(
-    #                     person=ne["word"], bucket_name="images"
-    #                 ):
-    #                     self.topic = ne["word"]
-    #                     logger.info(f"Named entity `{ne['word']}` found in GCP")
-    #                     return ne["word"]
-    #                 else:
-    #                     logger.warning(f"Named entity `{ne['word']}` not found in GCP")
-    #                     continue
-    #         else:
-    #             continue
-    #     # if no image of a person found or there is no person in named entities, \
-    #     # detect a general topic of the article and return an image corrensponding to that
-    #     classifier = pipeline(task="zero-shot-classification", model=CLASSIFICATION_MODEL)
-    #     result = classifier(
-    #         self.article,
-    #         candidate_labels=CLASSES,
-    #     )
-    #     # return label where score is max
-    #     scores_list = result["scores"]
-    #     n_max = scores_list.index(max(scores_list))
-    #     topic = result["labels"][n_max]
-    #     self.topic = topic
-    #     logger.info(f"`topic` set to {topic}")
-    #     return topic
 
     def get_named_entities(self) -> list[dict]:
         """Returns named entities in an article"""
@@ -151,6 +120,20 @@ class AI_Writer:
             else:
                 continue
         return list_of_per_named_entities if list_of_per_named_entities else None
+
+    def get_random_image_of_person(self, list_of_persons: list[str]) -> str | None:
+        list_of_persons_images = []
+        for person in list_of_persons:
+            person_snake_case = person.lower().replace(
+                " ", "_"
+            )  # Donald Trump -> donald_trump
+            for file in os.listdir("images"):
+                # match only regular images, not cropped ones
+                if person_snake_case in file and re.match(r".*_\d+.jpg", file):
+                    list_of_persons_images.append(file)
+        if list_of_persons_images:
+            return random.choice(list_of_persons_images)
+        return
 
     def classify_article_to_topic(
         self, article: str | None = None, candidate_labels: list[str] | None = None
@@ -269,22 +252,3 @@ class Filter:
             if re.search(key, string, re.IGNORECASE):
                 string.replace(key, value)
         return string
-
-
-if __name__ == "__main__":
-    text = """
-
-China wooed a number of top Western companies on Monday with renewed promises to open up its financial industry and create a more welcoming environment as Beijing tries to reverse a record low in foreign investment in the face of mounting economic challenges.
-
-Pan Gongsheng, governor of the People’s Bank of China (PBOC) and head of the country’s foreign exchange regulator, chaired a symposium with representatives from foreign companies, including JP Morgan, Tesla (TSLA), HSBC (HSBC), Deutsche Bank (DB), BNP Paribas, Japan’s MUFG Bank, German chemical producer BASF, commodities trader Trafigura and Schneider Electric, according to a statement posted on the websites of the PBOC and the State Administration of Foreign Exchange (SAFE).
-
-The symposium was intended to “increase financial support to help stabilize foreign trade and foreign investment” and improve the “investment environment” for foreign business, the statement said.
-
-Foreign companies and investors have grown wary of rising risks in the world’s second largest economy, including a worsening slowdown marked by weak domestic demand and a housing crisis, Beijing’s desire to prioritize national security over economic growth and deteriorating relations between China and many Western countries.
-
-In the first eight months of this year, foreign direct investment (FDI) into China fell 5.1% from a year ago, according to data released by China’s commerce ministry on Sunday. A separate measure for foreign investment painted a grimmer picture.
-
-Direct investment liabilities, a measure of FDI reflected in a country’s balance of payments, fell to just $4.9 billion in the April to June months, down 87% from a year earlier, according to data published by SAFE last month. That was the lowest amount in any quarter since records began in 1998.
-   """
-    ai_writer = AI_Writer("", "")
-    print(ai_writer.rewrite_text(input_=text))

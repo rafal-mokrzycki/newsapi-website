@@ -219,7 +219,9 @@ class GCP_Handler:
                     bucket_name, prefix
                 )
                 list_of_persons_uris.extend(list_of_found_uris_for_person)
-        return random.choice(list_of_persons_uris)
+        if list_of_persons_uris:
+            return random.choice(list_of_persons_uris)
+        return
 
     @staticmethod
     def get_bucket_and_blob_from_uri(uri: str) -> str:
