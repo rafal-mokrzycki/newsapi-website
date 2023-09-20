@@ -1,5 +1,6 @@
 # NewsAPI Website
 
+
 ## TL;DR - Simple usage
 
 1. Download the project.
