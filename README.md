@@ -1,5 +1,36 @@
 # NewsAPI Website
 
+## TL;DR - Simple usage
+
+1. Download the project.
+
+```bash
+git clone git@github.com:rafal-mokrzycki/newsapi-website.git
+```
+
+2. Download some royalty-free images of politicians or general nouns (like `transportation`, `cities` etc.), name them in the following manner: `donald_trump_0.jpg`, `donald_trump_1.jpg` etc. and put them in the `images` directory.
+
+3. Prepare the environment by creating virtual environment, installing required packages and preparing Django environment.
+
+```bash
+python -m venv .venv
+pip install -r requirements.txt
+python mysite\manage.py migrate
+python mysite\manage.py makemigrations
+```
+
+4. Run the app and populate the database with rewritten articles.
+
+```bash
+python mysite\manage.py run_daily
+```
+
+5. To see the result, run:
+
+```bash
+python mysite\manage.py runserver
+```
+
 ## Module 1.
 
 This module takes N records of newest articles via API from NewsAPI. For now, it is focused only on CNN data. Originally, it would returns a dictionary of such structure:
@@ -56,7 +87,7 @@ This module is responsible for rewriting articles and headline, topic and named 
 
 ## Module 3.
 
-Posting post add articles to rge Django DB. To populate DB with fake data, run:
+Posting post add articles to the Django DB. To populate DB with fake data, run:
 
 ```
 python mysite\manage.py import_articles

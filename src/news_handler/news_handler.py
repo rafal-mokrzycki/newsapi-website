@@ -9,9 +9,6 @@ from news_handler.exception import NewsAPIException
 
 from .news_auth import NewsApiAuth
 
-# from newsapi.newsapi_exception import NewsAPIException
-
-
 repackage.up(1)
 from utils.utils import stringify_date_param
 from utils.validators import NewsHandlerValidator
