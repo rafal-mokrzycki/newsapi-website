@@ -42,7 +42,7 @@ class Article(models.Model):
     article_text = models.CharField(max_length=8000)
     image = models.ImageField(upload_to="images/")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    topic = models.CharField(max_length=100, default="economy")
+    topic = models.CharField(max_length=100)
     pub_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -59,7 +59,3 @@ class Article(models.Model):
             pub_date=pub_date,
         )
         return article
-
-
-if __name__ == "__main__":
-    pass

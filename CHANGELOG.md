@@ -1,3 +1,7 @@
+#### 0.0.3
+
+- Restructure of Django app
+
 #### 0.0.2
 
 - Add `run_daily` script to run the whole program from Django level

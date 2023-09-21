@@ -16,20 +16,20 @@ git clone git@github.com:rafal-mokrzycki/newsapi-website.git
 ```bash
 python -m venv .venv
 pip install -r requirements.txt
-python mysite\manage.py migrate
-python mysite\manage.py makemigrations
+python manage.py migrate
+python manage.py makemigrations
 ```
 
 4. Run the app and populate the database with rewritten articles.
 
 ```bash
-python mysite\manage.py run_daily
+python manage.py run_daily
 ```
 
 5. To see the result, run:
 
 ```bash
-python mysite\manage.py runserver
+python manage.py runserver
 ```
 
 ## Module 1.
@@ -88,13 +88,11 @@ This module is responsible for rewriting articles and headline, topic and named 
 
 ## Module 3.
 
-Posting post add articles to the Django DB. To populate DB with fake data, run:
+To see the website running, run:
 
+```bash
+python manage.py runserver
 ```
-python mysite\manage.py import_articles
-```
-
-Beforehand you can manipulate with body of funtion `handle` in `mysite\newsapp\management\commands\import_articles.py` to set custom variables.
 
 ## Script for automatically scraping newest news articles
 
@@ -110,7 +108,7 @@ Beforehand you can manipulate with body of funtion `handle` in `mysite\newsapp\m
 
 3b. Get article main topic (`ai_writer.py`)
 
-3c. Get a photo from Google Storage that correspondents to the article main topic (`ai_writer.py` + `gcp_handler.py`)
+3c. Get a photo from Google Storage that correspondents to the article main topic (`ai_writer.py` + `gcs_handler.py`)
 
 4a. Return rewritten article text, rewritten headline and an image from Google Storage (...)
 

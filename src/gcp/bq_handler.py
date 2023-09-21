@@ -6,10 +6,12 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+import repackage
 from google.cloud import bigquery, exceptions
 from google.oauth2 import service_account
 
-from config.config import load_config
+repackage.up(2)
+from src.config.config import load_config
 
 config = load_config()
 
@@ -226,6 +228,16 @@ class BQ_Handler:
             return False
 
     def if_dataset_exists(self, *, dataset_name: str | None = None) -> bool:
+        """
+        Check if a given dataset already exists.
+
+        Args:
+            dataset_name (str | None, optional): Dataset to check. If None taken from
+            config. Defaults to None.
+
+        Returns:
+            bool: True if dataset exists, False otherwise.
+        """
         if dataset_name is None:
             dataset = self.dataset_name
         client = bigquery.Client(project=self.project_name)
@@ -239,11 +251,13 @@ class BQ_Handler:
             return False  # Dataset doesn't exist
 
     def create_small_temp_table(self):
+        """Creates a small temporary BQ table"""
         dataset_name = self.dataset_name
         table_name = config["small_temp_table"]
         self.create_table(dataset_name=dataset_name, table_name=table_name)
 
     def create_large_temp_table(self):
+        """Creates a large temporary BQ table"""
         dataset_name = self.dataset_name
         table_name = config["large_temp_table"]
         self.create_table(dataset_name=dataset_name, table_name=table_name)

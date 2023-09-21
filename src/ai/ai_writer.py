@@ -5,12 +5,15 @@ from pathlib import Path
 
 import repackage
 from nltk import tokenize
+from tqdm.auto import tqdm
 from transformers import PegasusForConditionalGeneration, PegasusTokenizerFast, pipeline
 
 repackage.up()
 from config.config import load_config
-from gcp_handler.gcp_handler import GCP_Handler
-from utils.utils import CustomLogger
+from gcp.gcs_handler import GCS_Handler
+from news.news_handler import NewsHandler
+from parsers.article_parser import get_original_article_text
+from utilities.utils import CustomLogger, wait_for_web_scraping
 
 NER_MODEL = "Jean-Baptiste/camembert-ner"
 CLASSIFICATION_MODEL = "facebook/bart-large-mnli"
@@ -86,7 +89,7 @@ class AI_Writer:
                     )
                     self.uri = f"images/{image_path}"
             else:
-                image_uri = GCP_Handler().get_random_image_of_person(
+                image_uri = GCS_Handler().get_random_image_of_person(
                     bucket_name="images", list_of_persons=per_named_entitites
                 )
                 if image_uri is None:
@@ -122,6 +125,7 @@ class AI_Writer:
         return list_of_per_named_entities if list_of_per_named_entities else None
 
     def get_random_image_of_person(self, list_of_persons: list[str]) -> str | None:
+        """Returns a random image of a person"""
         list_of_persons_images = []
         for person in list_of_persons:
             person_snake_case = person.lower().replace(
@@ -138,6 +142,18 @@ class AI_Writer:
     def classify_article_to_topic(
         self, article: str | None = None, candidate_labels: list[str] | None = None
     ) -> str:
+        """
+        Classifies an article to a topic based on the content.
+
+        Args:
+            article (str | None, optional): Article content. If None taken from class
+            variable `article`. Defaults to None.
+            candidate_labels (list[str] | None, optional): Classes to pick from. If None
+            taken from script variable `CLASSES`. Defaults to None.
+
+        Returns:
+            str: Article topic.
+        """
         if article is None:
             article = self.article
         if candidate_labels is None:
@@ -154,6 +170,26 @@ class AI_Writer:
         self.topic = topic
         logger.info(f"`topic` set to {topic}")
         return topic
+
+    @staticmethod
+    def get_actual_named_entities():
+        """
+        Helper function to get all named entities in first 15 articles from NewsHandler.
+        """
+        news_handler = NewsHandler()
+        news = news_handler.get_top_headlines(page=1, page_size=15)
+        list_of_actual_named_entities = []
+        for new in tqdm(news):
+            headline, article = get_original_article_text(new[0], new[1])
+            ai_writer = AI_Writer(headline, article)
+            ne_list = ai_writer.get_named_entities()
+            ne_person_list = ai_writer.get_named_entities_person(ne_list)
+            for person in tqdm(ne_person_list):
+                list_of_actual_named_entities.append(person)
+            wait_for_web_scraping()
+        with open("list_of_actual_named_entities.txt", "a+") as file:
+            for ne in set(list_of_actual_named_entities):
+                file.write(f"{ne}\n")
 
     @staticmethod
     def add_html_advertisment(
@@ -228,6 +264,18 @@ class AI_Writer:
 
 class Filter:
     def contains_pattern(pattern: str, string: str, flags: str | None = None) -> bool:
+        """
+        Checks if a given string contains a substring matching (re.)pattern.
+
+        Args:
+            pattern (str): Pattern to check string against.
+            string (str): String to check.
+            flags (str | None, optional): Flags to add to `re.search` function. If None
+            equal to re.IGNORECASE. Defaults to None.
+
+        Returns:
+            bool: True if string contains a substring, False otherwise.
+        """
         if flags is None:
             flags = re.IGNORECASE
         if re.search(pattern, string, flags):
@@ -235,20 +283,43 @@ class Filter:
         return False
 
     def contains_video(string: str) -> bool:
+        """
+        Returns True if `string` contains `video` substring (case insensitive),
+        False otherwise.
+        """
         if re.search(r"video", string, re.IGNORECASE):
             return True
         return False
 
     def is_too_short_text(string: str) -> bool:
+        """
+        Returns True if `string` is shorter than 3 sentences, False otherwise.
+        """
         sentences = tokenize.sent_tokenize(string)
         if len(sentences) < 3:
             return True
         return False
 
-    def replace_unwanted_keywords(
-        string: str, keywords: dict = {"CNN": "media"}
-    ) -> list | None:
+    def replace_unwanted_keywords(string: str, keywords: dict | None = None) -> str:
+        """
+        Replaces substrings (keys from `keywords`) with values from `keywords`
+        in a string.
+
+        Args:
+            string (str): String to change.
+            keywords (dict | None, optional): Dictionary to take substrings to swap from.
+            If None equals to {"CNN": "media"}. Defaults to None.
+
+        Returns:
+            str: String with replacements.
+        """
+        if keywords is None:
+            keywords = {"CNN": "media"}
         for key, value in keywords.items():
             if re.search(key, string, re.IGNORECASE):
                 string.replace(key, value)
         return string
+
+
+if __name__ == "__main__":
+    AI_Writer.get_actual_named_entities()
