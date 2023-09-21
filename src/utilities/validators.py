@@ -1,6 +1,7 @@
 """Validators for the funtionalities of the app."""
 import datetime
 import re
+from typing import Any
 
 import repackage
 
@@ -58,12 +59,12 @@ class Google:
 
 
 class NewsHandlerValidator:
-    def is_valid_string(var) -> bool:
+    def is_valid_string(var: Any) -> bool:
         """
         Validates if input is a valid string.
 
         Args:
-            var (_type_): Input variable.
+            var (Any): Input variable.
 
         Returns:
             bool: True if input is a valid string, False otherwise.
@@ -96,12 +97,12 @@ class NewsHandlerValidator:
         if not DATETIME_RE.match(datetimestr):
             raise ValueError("Datetime input should be in format of YYYY-MM-DDTHH:MM:SS")
 
-    def is_valid_num(var) -> bool:
+    def is_valid_num(var: Any) -> bool:
         """
         Validates if input is a valid number (int or float).
 
         Args:
-            var (_type_): Input variable.
+            var (Any): Input variable.
 
         Returns:
             bool: True if input is a valid number, False otherwise.
@@ -109,7 +110,7 @@ class NewsHandlerValidator:
         return isinstance(var, (int, float))
 
 
-def stringify_date_param(dt):
+def stringify_date_param(dt: Any):
     """Returns string representation of a date parameter"""
     if NewsHandlerValidator.is_valid_string(dt):
         if len(dt) == DATE_LEN:
