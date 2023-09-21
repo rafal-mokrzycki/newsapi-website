@@ -6,12 +6,12 @@ from tqdm.auto import tqdm
 
 from newsapp.models import Article, Author
 
-repackage.up(4)
-from src.ai_writer.ai_writer import AI_Writer
+repackage.up(3)
+from src.ai.ai_writer import AI_Writer
 from src.config.config import load_config
-from src.news_handler.news_handler import NewsHandler
+from src.news.news_handler import NewsHandler
 from src.parsers import article_parser
-from src.utils.utils import wait_for_web_scraping
+from src.utilities.utils import wait_for_web_scraping
 
 config = load_config()
 
@@ -46,6 +46,19 @@ class Command(BaseCommand):
                 ai_writer.rewrite_headline()
                 ai_writer.rewrite_article()
                 ai_writer.detect_topic()
+                try:
+                    # Try to get the author from the database
+                    author = Author.objects.get(name_surname=ai_writer.author)
+                except Author.DoesNotExist:
+                    # If the author doesn't exist, create it
+                    author = Author(name_surname=ai_writer.author)
+                    author.save()
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"Author {Author.name_surname} successfully posted"
+                        )
+                    )
+
                 article = Article(
                     headline=ai_writer.rewritten_headline,
                     article_text=ai_writer.rewritten_article,

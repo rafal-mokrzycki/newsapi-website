@@ -4,14 +4,11 @@ from pathlib import Path
 import repackage
 import requests
 
-from config.config import load_config
-from news_handler.exception import NewsAPIException
-
-from .news_auth import NewsApiAuth
-
-repackage.up(1)
-from utils.utils import stringify_date_param
-from utils.validators import NewsHandlerValidator
+repackage.up(2)
+from src.config.config import load_config
+from src.news.exception import NewsAPIException
+from src.news.news_auth import NewsApiAuth
+from src.utilities.validators import NewsHandlerValidator, stringify_date_param
 
 config = load_config()
 

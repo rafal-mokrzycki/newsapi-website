@@ -1,12 +1,9 @@
 from pathlib import Path
 
-from src.ai_writer.ai_writer import AI_Writer, Filter
-from src.news_handler.news_handler import NewsHandler
+from src.ai.ai_writer import AI_Writer, Filter
+from src.news.news_handler import NewsHandler
 from src.parsers import article_parser
-from src.utils.utils import CustomLogger, wait_for_web_scraping
-
-LIMIT = 1
-
+from src.utilities.utils import CustomLogger, wait_for_web_scraping
 
 logger = CustomLogger(Path(__file__).name)
 
@@ -41,7 +38,7 @@ def main(mode):
         # TODO: add functionality assinging URI to AI_Writer variable
         ai_writer.detect_topic()
         # 3c. Get a photo from Google Storage that correspondents to the article main \
-        # topic (`ai_writer.py` + `gcp_handler.py`)
+        # topic (`ai_writer.py` + `gcs_handler.py`)
         pass
         # 4a. Return rewritten article text, rewritten headline and an image from Google \
         # Storage (...)
@@ -62,4 +59,3 @@ def main(mode):
 
 if __name__ == "__main__":
     main(mode="local")
-

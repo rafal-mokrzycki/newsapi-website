@@ -8,12 +8,12 @@ from google.cloud import exceptions, storage
 
 repackage.up()
 from config.config import load_config
-from utils.validators import Google
+from utilities.validators import Google
 
 config = load_config()
 
 
-class GCP_Handler:
+class GCS_Handler:
     def _init__(
         self,
         key_path: Path | None = None,
@@ -194,6 +194,17 @@ class GCP_Handler:
             logging.error(f"Blob {blob_name} not found.")
 
     def is_person_in_gcs(self, bucket_name: str, person: str) -> bool:
+        """
+        Checks if there is at least one image of a given person in GCS.
+
+        Args:
+            bucket_name (str): Bucket to check.
+            person (str): Person to search image for.
+
+        Returns:
+            bool: True if there is at least one image of a given person in GCS,
+            False otherwise.
+        """
         person_snake_case = person.lower().replace(
             " ", "_"
         )  # Donald Trump -> donald_trump
@@ -206,8 +217,17 @@ class GCP_Handler:
     def get_random_image_of_person(
         self, bucket_name: str, list_of_persons: list[str]
     ) -> str | None:
-        """Returns a random URI of an image of a person from `list_of_persons`.
-        If image for a person not found, returns None."""
+        """
+        Returns a random URI of an image of a person from `list_of_persons`.
+        If image for a person not found, returns None.
+        Args:
+            bucket_name (str): Bucket to search in.
+            list_of_persons (list[str]): List of persons to search images for.
+
+        Returns:
+            str | None: If there is at least one image for at least one person, returns
+            a list with it (them), None otherwise.
+        """
         list_of_persons_uris = []
         for person in list_of_persons:
             if self.is_person_in_gcs(person, bucket_name):

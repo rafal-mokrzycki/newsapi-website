@@ -21,7 +21,6 @@
     <!-- fonts style -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Roboto:400,700&display=swap" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <!-- <link href="static/newsapp/css/style.css" rel="stylesheet" /> -->
     <link href="{% static 'newsapp/css/style.css' %}" rel="stylesheet" />
     <!-- responsive style -->
     <link href="{% static 'newsapp/css/responsive.css' %}" rel="stylesheet" />
@@ -78,7 +77,7 @@
                 demo@gmail.com
                 </a>
               </div>
-            </div> -->
+              </div> -->
           </nav>
         </div>
       </header>
@@ -90,95 +89,96 @@
       <section class="news_section layout_padding">
         <div class="container">
         <div class="row">
-          <div class="col-sm-9">
+          <div class="col-sm-8">
             <div class="d-flex flex-column align-items-end">
+              <!-- headline -->
               <div class="custom_heading-container">
-
                 <h2>
-                  Latest News
+                  {{ article.headline }}
                 </h2>
               </div>
-            </div>
-            <div class="row">
-              {% for article in latest_article_list %}
-              <div class="col-sm-4">
-                <div class="box">
-                  <div class="img-box full-image">
-                    <a href="{% url 'newsapp:detail' article.id %}">
-                    <img src="{{ article.image.url }}" alt="">
+              <!-- image -->
+              <div class="box">
+                <div class="img-box article-image">
+                  <a href="{% url 'newsapp:detail' article.id %}">
+                  <img src="{{ article.image.url }}" alt="">
+                  </a>
+                </div>
+              </div>
+              <!-- subtitle -->
+              <div class="subtitle-box">
+                <p>Published: {{ article.pub_date|myDate }}</p>
+                <p>Author: <a href="">{{ article.author }}</a></p>
+                <div class="action-box">
+                  <div class="action">
+                    <!-- Whatspp -->
+                    <a href="">
+                    <img class="sm-icon" src="{% static 'newsapp/images/whatsapp.png' %}"  >
                     </a>
-                  </div>
-                  <div class="detail-box">
-                    <h4>
-                      <a href="{% url 'newsapp:detail' article.id %}">
-                      {{ article.headline }}
-                      </a>
-                    </h4>
-                    <!-- <p>
-                      It is a long established fact that a reader will be distracted by the readable content of a page when
-                      looking at its layout. The point of using Lorem
-                      </p>
-                      <div>
-                      <a href="">
-                        Read More
-                      </a>
-                      </div> -->
+                    <!-- Facebook -->
+                    <a href="">
+                    <img class="sm-icon" src="{% static 'newsapp/images/facebook.png' %}"  >
+                    </a>
+                    <!-- Twitter -->
+                    <a href="">
+                    <img class="sm-icon" src="{% static 'newsapp/images/twitter-2.png' %}"  >
+                    </a>
+                    <!-- Whatsapp -->
+                    <!-- Email -->
+                    <a class="social-share__share" href="mailto:?subject=NewsPortal%20content%20share&amp;body=Check%20out%20this%20article%3A%0Ahttps%3A%2F%2Fwww.newsportal.com%2F2023%2F09%2F19%2Fchina%2Fchina-germany-xi-dictator-intl-hnk" data-type="email" target="_blank" rel="noopener noreferrer" aria-label="share with email" title="Share with email"></a>
+                    <a href="">
+                    <img class="sm-icon" src="{% static 'newsapp/images/mail.png' %}"  >
+                    </a>
+                    <!-- Link -->
+                    <a href="">
+                    <img class="sm-icon" src="{% static 'newsapp/images/link-2.png' %}"  >
+                    </a>
                   </div>
                 </div>
               </div>
-              {% endfor %}
+              <!-- article -->
+              <p>{{ article.article_text }}</p>
             </div>
           </div>
-          <div class="col-sm-3">
-            <div class="d-flex flex-column align-items-end">
-              <div class="custom_heading-container">
-
-                <h2>
-                  May also interest you
-                </h2>
-              </div>
-            </div>
-            <div class="row">
-              {% for article in recently_added_article_list %}
-              <div class="col-sm-12">
-                <div class="box">
-                  <!-- <div class="img-box full-image">
-                    <a href="{% url 'newsapp:detail' article.id %}">
-                      <img src="{{ article.image.url }}" alt="">
-                    </a>
-                    </div> -->
-                  <!-- <div class="action-box">
-                    <div class="action">
-                      <a href="">
-                        <img src="{% static '/newsapp/images/like.png' %}" alt="">
-                      </a>
-                      <a href="">
-                        <img src="{% static '/newsapp/images/comment.png' %}" alt="">
-                      </a>
-                      <a href="">
-                        <img src="{% static '/newsapp/images/share.png' %}" alt="">
-                      </a>
+          <div class="col-sm-4">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="d-flex flex-column align-items-end">
+                    <div class="custom_heading-container">
+                      <h3>
+                        May also interest you
+                      </h3>
+                      <br>
+                      <br>
+                      <br>
                     </div>
-                    </div> -->
-                  <div class="detail-box">
-                    <h6>
-                      <a href="{% url 'newsapp:detail' article.id %}">
-                      {{ article.headline }}
-                      </a>
-                    </h6>
                   </div>
-
+                  <div>
+                    <!-- add advert here -->
+                  </div>
+                  <div>
+                    <!-- <div class="col-sm-12"> -->
+                    {% for recent_article in recently_added_article_list %}
+                    <div class="recent-news-box">
+                      <div class="detail-box">
+                        <h6>
+                          <a href="{% url 'newsapp:detail' article.id %}">
+                          {{ recent_article.headline }}
+                          </a>
+                        </h6>
+                        <hr>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
-              {% endfor %}
             </div>
           </div>
         </div>
       </section>
     </main>
-    <!-- end news section -->
-    <!-- TODO: make first article in 'recently added' with a photo, others without -->
-    <!-- TODO: add advert below 'recently added' -->
     <!-- info section -->
     <footer>
       <section class="info_section layout_padding">
@@ -191,7 +191,7 @@
             </div>
             <div>
               <a href="">
-              <img src="{% static '/newsapp/images/twitter.png' %}" alt="">
+              <img src="{% static '/newsapp/images/twitter-2.png' %}" alt="">
               </a>
             </div>
             <div>
@@ -207,20 +207,12 @@
           </div>
           <div>
             <p>
-              All rights of the selected material reserved
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+              magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
             </p>
           </div>
         </div>
       </section>
-      <!-- end info_section -->
-      <!-- footer section -->
-      <!-- <section class="container-fluid footer_section">
-        <p>
-          &copy; 2019 All Rights Reserved By
-          <a href="https://html.design/">Free Html Templates</a>
-        </p>
-        </section> -->
-      <!-- footer section -->
       <script type="text/javascript" src="{% static '/newsapp/js/jquery-3.4.1.min.js' %}"></script>
       <script type="text/javascript" src="{% static '/newsapp/js/bootstrap.js' %}"></script>
     </footer>
