@@ -316,8 +316,8 @@ class Filter:
         if keywords is None:
             keywords = {"CNN": "media"}
         for key, value in keywords.items():
-            if re.search(key, string, re.IGNORECASE):
-                string.replace(key, value)
+            if re.search(key, string, re.IGNORECASE) is not None:
+                string = string.replace(key, value)
         return string
 
 
