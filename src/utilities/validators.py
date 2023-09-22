@@ -107,6 +107,8 @@ class NewsHandlerValidator:
         Returns:
             bool: True if input is a valid number, False otherwise.
         """
+        if isinstance(var, bool):
+            return False
         return isinstance(var, (int, float))
 
 
@@ -119,8 +121,7 @@ def stringify_date_param(dt: Any):
             NewsHandlerValidator.validate_datetime_str(dt)
         else:
             raise ValueError(
-                "Date input should be in format of either YYYY-MM-DD \
-                    or YYYY-MM-DDTHH:MM:SS"
+                "Date input should be in format of either YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"
             )
         return dt
     # Careful: datetime.datetime is subclass of datetime.date!
