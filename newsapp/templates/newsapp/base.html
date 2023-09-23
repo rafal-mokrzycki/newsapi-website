@@ -104,11 +104,11 @@
               {% for article in recently_added_article_list %}
               <div class="col-sm-12">
                 <div class="box">
-                  <!-- <div class="img-box full-image">
+                  <div class="img-box full-image">
                     <a href="{% url 'newsapp:detail' article.id %}">
                       <img src="{{ article.image.url }}" alt="">
                     </a>
-                    </div> -->
+                    </div>
                   <!-- <div class="action-box">
                     <div class="action">
                       <a href="">
@@ -131,6 +131,7 @@
                   </div>
                 </div>
               </div>
+
               {% endfor %}
             </div>
           </div>

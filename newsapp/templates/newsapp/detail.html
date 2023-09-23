@@ -1,3 +1,4 @@
+<!-- TODO: replace https://www.code2night.com/ with current article link -->
 {% extends 'newsapp/base.html' %}
 {% block content %}
 {% load static %}
@@ -20,12 +21,15 @@
     </div>
     <!-- subtitle -->
     <div class="subtitle-box">
+      <div class="author">
       <p>Published: {{ article.pub_date|myDate }}</p>
-      <p>Author: <a href="{% url 'newsapp:author' article.author %}">{{ article.author }}</a></p>
-      <div class="action-box">
+      <p>Author: <a class="author" href="{% url 'newsapp:author' article.author %}">{{ article.author }}</a></p>
+    </div>
+    <div class="action-box">
         <div class="action">
           <!-- Whatspp -->
-          <a href="">
+          <a href="https://api.whatsapp.com/send?text=https://www.code2night.com/"  data-action="share/whatsapp/share"
+          target="_blank">
           <img class="sm-icon" src="{% static 'newsapp/images/whatsapp.png' %}"  >
           </a>
           <!-- Facebook -->
@@ -33,13 +37,12 @@
           <img class="sm-icon" src="{% static 'newsapp/images/facebook.png' %}"  >
           </a>
           <!-- Twitter -->
-          <a href="">
+          <a href="https://twitter.com/intent/tweet?text=See this article: https://www.code2night.com/" target="_blank">
           <img class="sm-icon" src="{% static 'newsapp/images/twitter-2.png' %}"  >
           </a>
-          <!-- Whatsapp -->
           <!-- Email -->
-          <a class="social-share__share" href="mailto:?subject=NewsPortal%20content%20share&amp;body=Check%20out%20this%20article%3A%0Ahttps%3A%2F%2Fwww.newsportal.com%2F2023%2F09%2F19%2Fchina%2Fchina-germany-xi-dictator-intl-hnk" data-type="email" target="_blank" rel="noopener noreferrer" aria-label="share with email" title="Share with email"></a>
-          <a href="">
+          <a class="social-share__share" href="mailto:?subject=NewsPortal%20content%20share&amp;body=Check%20out%20this%20article%3A%0Ahttps%3A%2F%2Fwww.newsportal.com%2F2023%2F09%2F19%2Fchina%2Fchina-germany-xi-dictator-intl-hnk" data-type="email" target="_blank" rel="noopener noreferrer" aria-label="share with email" title="Share with email">
+          <!-- <a href=""> -->
           <img class="sm-icon" src="{% static 'newsapp/images/mail.png' %}"  >
           </a>
           <!-- Link -->
@@ -50,7 +53,10 @@
       </div>
     </div>
     <!-- article -->
-    <p>{{ article.article_text }}</p>
+    <!-- <p>{{ article.article_text }}</p> -->
+    {% for sentence in article_text %}
+    <p>{{ sentence }}</p>
+    {% endfor %}
   </div>
 </div>
 <!-- <div class="col-sm-4"> -->

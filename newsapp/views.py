@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from nltk.tokenize import sent_tokenize
 
 from .models import Article
 
@@ -24,12 +25,13 @@ def detail(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
     image = article.image
     recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
-
+    article_text = [sentence for sentence in sent_tokenize(article.article_text)]
     return render(
         request,
         "newsapp/detail.html",
         {
             "article": article,
+            "article_text": article_text,
             "image": image,
             "recently_added_article_list": recently_added_article_list,
         },
