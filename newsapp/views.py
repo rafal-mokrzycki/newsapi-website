@@ -45,6 +45,7 @@ def author(request, author_name_surname):
         "-pub_date"
     )
     recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
+    short_texts = [article.article_text[:45] + "..." for article in author_articles]
     return render(
         request,
         "newsapp/author.html",
@@ -52,5 +53,6 @@ def author(request, author_name_surname):
             "author_articles": author_articles,
             "recently_added_article_list": recently_added_article_list,
             "author_name_surname": author_name_surname,
+            "short_texts": short_texts,
         },
     )

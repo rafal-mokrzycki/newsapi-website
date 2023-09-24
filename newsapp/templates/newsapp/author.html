@@ -3,28 +3,39 @@
 {% load static %}
 {% load newsapp_extras %}
 <div class="col-sm-9">
-  <div class="d-flex flex-column align-items-end">
-    <div class="custom_heading-container">
-      <!-- headline -->
-      <h2>Articles by {{ author_name_surname }}</h2>
-    </div>
-  <div class="row">
+<div class="d-flex flex-column align-items-end">
+<div class="custom_heading-container">
+  <!-- headline -->
+  <h2>Articles by {{ author_name_surname }}</h2>
+</div>
+<div class="row">
   {% for article in author_articles %}
-  <div class="col-sm-4">
+  <div class="col-sm-12">
     <div class="box">
-      <div class="img-box full-image">
-        <a href="{% url 'newsapp:detail' article.id %}">
-        <img src="{{ article.image.url }}" alt="">
-        </a>
-      </div>
-      <div class="detail-box">
-        <h4>
-          <a href="{% url 'newsapp:detail' article.id %}">
-          {{ article.headline }}
-          </a>
-        </h4>
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="box">
+            <div class="img-box full-image">
+              <a href="{% url 'newsapp:detail' article.id %}">
+              <img src="{{ article.image.url }}" alt="">
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-8">
+          <div class="box detail-box">
+            <h4>
+              <a href="{% url 'newsapp:detail' article.id %}">
+              {{ article.headline }}
+              </a>
+            </h4>
+            <p>Published: {{ article.pub_date|myDate }}</p>
+              <p>{{ article.article_text | truncatechars:200 }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-{% endfor %}
+  {% endfor %}
+</div>
 {% endblock %}
