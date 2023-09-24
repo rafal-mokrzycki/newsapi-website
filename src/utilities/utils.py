@@ -2,44 +2,68 @@ from __future__ import unicode_literals
 
 import logging
 import random
+import sys
 import time
 from functools import wraps
+from logging.handlers import RotatingFileHandler
+
+import coloredlogs
+from google.cloud import storage
 
 
 class CustomLogger:
-    def __init__(self, name):
+    def __init__(self, name, mode="local"):
         self.logger = logging.getLogger(name)
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.propagate = False
 
+        # Configure console logger with colored log levels
+        console_handler = logging.StreamHandler(sys.stdout)
         # Create a custom formatter
-        formatter = logging.Formatter(
-            fmt="%(asctime)s : %(name)s : %(levelname)s : %(message)s",
+        console_formatter = coloredlogs.ColoredFormatter(
+            fmt="%(asctime)s : %(name)s : %(levelname)-10s : %(message)s",
+            field_styles={
+                "hostname": {"color": "white"},
+                "programname": {"color": "white"},
+                "name": {"color": "white"},
+                "levelname": {"color": "white"},
+                "asctime": {"color": "white"},
+            },
+            level_styles={
+                "debug": {"color": "cyan", "bold": True},
+                "info": {"color": "green", "bold": True},
+                "warning": {"color": "yellow", "bold": True},
+                "error": {"color": "red", "bold": True},
+                "critical": {"color": "red", "bold": True},
+            },
         )
 
-        # Create a console handler
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(formatter)
-
-        # Add the console handler to the logger
+        console_handler.setFormatter(console_formatter)
         self.logger.addHandler(console_handler)
 
-        # Define custom log levels and colors
-        logging.addLevelName(
-            logging.DEBUG, "\033[36m%s\033[0m" % logging.getLevelName(logging.DEBUG)
+        # Configure local file logger for warnings and above
+        local_file_handler = RotatingFileHandler(
+            "example.log", maxBytes=100000, backupCount=1
         )
-        logging.addLevelName(
-            logging.INFO, "\033[37m%s\033[0m" % logging.getLevelName(logging.INFO)
+        local_file_handler.setLevel(logging.WARNING)
+        # Create a custom formatter
+        local_file_formatter = logging.Formatter(
+            fmt="%(asctime)s : %(name)s : %(levelname)s : %(message)s"
         )
-        logging.addLevelName(
-            logging.WARNING, "\033[33m%s\033[0m" % logging.getLevelName(logging.WARNING)
-        )
-        logging.addLevelName(
-            logging.ERROR, "\033[31m%s\033[0m" % logging.getLevelName(logging.ERROR)
-        )
-        logging.addLevelName(
-            logging.CRITICAL, "\033[31m%s\033[0m" % logging.getLevelName(logging.CRITICAL)
-        )
+        local_file_handler.setFormatter(local_file_formatter)
+        self.logger.addHandler(local_file_handler)
+
+        if mode == "gcp":
+            # Configure Google Cloud Storage logger for errors and above
+            gcs_handler = GCSHandler("example.log", "your-google-cloud-bucket-name")
+            gcs_handler.setLevel(logging.WARNING)
+            # Create a custom formatter
+            gcs_formatter = logging.Formatter(
+                fmt="%(asctime)s : %(name)s : %(levelname)s : %(message)s"
+            )
+            gcs_handler.setFormatter(gcs_formatter)
+            self.logger.addHandler(gcs_handler)
+
+        # Set the minimum log level for the logger
+        self.logger.setLevel(logging.DEBUG)
 
     def info(self, message):
         self.logger.info(message)
@@ -55,6 +79,22 @@ class CustomLogger:
 
     def critical(self, message):
         self.logger.critical(message)
+
+
+class GCSHandler(logging.StreamHandler):
+    def __init__(self, filename, bucket_name):
+        super().__init__()
+        self.filename = filename
+        self.bucket_name = bucket_name
+        self.client = storage.Client()
+
+    def emit(self, record):
+        try:
+            bucket = self.client.get_bucket(self.bucket_name)
+            blob = bucket.blob(self.filename)
+            blob.upload_from_string(self.format(record) + "\n", content_type="text/plain")
+        except Exception as e:
+            print(f"Error uploading log to Google Cloud Storage: {e}")
 
 
 def timer(func):
