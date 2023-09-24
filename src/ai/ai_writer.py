@@ -54,25 +54,27 @@ class AI_Writer:
         logger.info("Headline rewritten")
         return rewritten_headline
 
-    def detect_topic(self) -> None:
+    def detect_topic(self, **kwargs) -> None:
         """Detects article topic and sets instance variable `topic`."""
         named_entities = self.get_named_entities()
         if named_entities is None:
             # If the article doesn't contain any named entity, \
             # detect general topic of the article
             logger.warning("Named entities not found in article")
-            topic = self.classify_article_to_topic()
+            topic = self.classify_article_to_topic(**kwargs)
             self.topic = topic
             return topic
         per_named_entitites = self.get_named_entities_person(named_entities)
         if per_named_entitites is None:
             # If the article doesn't contain any PER (person) named entity, \
             # detect general topic of the article
-            self.classify_article_to_topic()
+            topic = self.classify_article_to_topic(**kwargs)
+            self.topic = topic
+            return topic
         else:
             if self.mode == "local":
                 # If the access to GCP is unabled assign PER named entity as a topic
-                self.classify_article_to_topic()
+                topic = self.classify_article_to_topic(**kwargs)
                 image_path = self.get_random_image_of_person(
                     list_of_persons=per_named_entitites
                 )
@@ -82,12 +84,16 @@ class AI_Writer:
                 )
                 if image_path is not None:
                     self.uri = f"images/{image_path}"
+                    return topic
                 else:
                     # if image for any person not found, get image for a topic
+                    for per in per_named_entitites:
+                        logger.error(f"Image(s) of {per} not found")
                     image_path = self.get_random_image_of_person(
                         list_of_persons=[self.topic]
                     )
                     self.uri = f"images/{image_path}"
+                    return topic
             else:
                 image_uri = GCS_Handler().get_random_image_of_person(
                     bucket_name="images", list_of_persons=per_named_entitites
