@@ -1,4 +1,5 @@
 <!-- TODO: replace https://www.code2night.com/ with current article link -->
+<!-- TODO: add Pagination (see: https://docs.djangoproject.com/en/4.2/topics/pagination/) -->
 {% extends 'newsapp/base.html' %}
 {% block content %}
 {% load static %}
@@ -15,7 +16,7 @@
     <div class="box">
       <div class="img-box article-image">
         <a href="{% url 'newsapp:detail' article.id %}">
-        <img src="{{ article.image.url }}" alt="">
+        <img alt="" src="{{ article.image.url }}" >
         </a>
       </div>
     </div>
@@ -30,34 +31,32 @@
           <!-- Whatspp -->
           <a href="https://api.whatsapp.com/send?text=https://www.code2night.com/"  data-action="share/whatsapp/share"
           target="_blank">
-          <img class="sm-icon" src="{% static 'newsapp/images/whatsapp.png' %}"  >
+          <img alt="" class="sm-icon" src="{% static 'newsapp/images/whatsapp.png' %}"  >
           </a>
           <!-- Facebook -->
           <a href="">
-          <img class="sm-icon" src="{% static 'newsapp/images/facebook.png' %}"  >
+          <img alt="" class="sm-icon" src="{% static 'newsapp/images/facebook.png' %}"  >
           </a>
           <!-- Twitter -->
           <a href="https://twitter.com/intent/tweet?text=See this article: https://www.code2night.com/" target="_blank">
-          <img class="sm-icon" src="{% static 'newsapp/images/twitter-2.png' %}"  >
+          <img alt="" class="sm-icon" src="{% static 'newsapp/images/twitter-2.png' %}"  >
           </a>
           <!-- Email -->
           <a class="social-share__share" href="mailto:?subject=NewsPortal%20content%20share&amp;body=Check%20out%20this%20article%3A%0Ahttps%3A%2F%2Fwww.newsportal.com%2F2023%2F09%2F19%2Fchina%2Fchina-germany-xi-dictator-intl-hnk" data-type="email" target="_blank" rel="noopener noreferrer" aria-label="share with email" title="Share with email">
           <!-- <a href=""> -->
-          <img class="sm-icon" src="{% static 'newsapp/images/mail.png' %}"  >
+          <img alt="" class="sm-icon" src="{% static 'newsapp/images/mail.png' %}"  >
           </a>
           <!-- Link -->
           <a href="">
-          <img class="sm-icon" src="{% static 'newsapp/images/link-2.png' %}"  >
+          <img alt="" class="sm-icon" src="{% static 'newsapp/images/link-2.png' %}"  >
           </a>
         </div>
       </div>
     </div>
     <!-- article -->
-    <!-- <p>{{ article.article_text }}</p> -->
     {% for sentence in article_text %}
     <p>{{ sentence }}</p>
     {% endfor %}
   </div>
 </div>
-<!-- <div class="col-sm-4"> -->
 {% endblock %}

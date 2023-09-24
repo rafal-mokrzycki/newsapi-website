@@ -14,6 +14,7 @@ register = template.Library()
 
 
 class Author(models.Model):
+    # TODO: add image field storing author's photo from thispersondoesnotexists
     class NameSurname(models.TextChoices):
         JORDAN = "Jordan Price"
         IAN = "Ian Alvarez"
