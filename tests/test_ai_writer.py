@@ -1,9 +1,159 @@
 import re
 
+import pytest
 import repackage
 
 repackage.up()
-from src.ai.ai_writer import Filter
+from src.ai.ai_writer import AI_Writer, Filter
+
+
+@pytest.fixture(scope="module", name="string_empty")
+def fixture_string_empty():
+    yield ""
+
+
+@pytest.fixture(scope="module", name="string_full")
+def fixture_string_full():
+    yield "Armenia PM takes swipe at Russia as first civilians leave breakaway Nagorno-Karabakh"
+
+
+def test_rewrite_article_test_type(string_full):
+    ai_writer = AI_Writer(string_full, string_full)
+    assert isinstance(ai_writer.rewrite_article(), str) is True
+
+
+def test_rewrite_article_test_non_equality(string_full):
+    ai_writer = AI_Writer(string_full, string_full)
+    assert ai_writer.rewrite_article() != string_full
+
+
+def test_rewrite_headline_test_type(string_full):
+    ai_writer = AI_Writer(string_full, string_full)
+    assert isinstance(ai_writer.rewrite_headline(), str) is True
+
+
+def test_rewrite_headline_test_non_equality(string_full):
+    ai_writer = AI_Writer(string_full, string_full)
+    assert ai_writer.rewrite_headline() != string_full
+
+
+def test_detect_topic_named_entities_none(string_empty):
+    article = "What is the most beautiful color?"
+    ai_writer = AI_Writer(string_empty, article)
+    classes = ["business", "politics", "lifestyle"]
+    result = ai_writer.detect_topic(candidate_labels=classes)
+    assert result == "lifestyle"
+
+
+def test_detect_topic_per_named_entities_none(string_full):
+    ai_writer = AI_Writer(string_full, string_full)
+    classes = ["business", "politics", "lifestyle"]
+    result = ai_writer.detect_topic(candidate_labels=classes)
+    assert result == "politics"
+
+
+def test_detect_topic_no_image():
+    headline = ""
+    article = "Ebighar Rajjashwili is the most famous Armenian politician."
+    ai_writer = AI_Writer(headline, article)
+    classes = ["economy", "lifestyle"]
+    result = ai_writer.detect_topic(candidate_labels=classes)
+    assert result == "economy"
+
+
+def test_detect_topic_true():
+    headline = ""
+    article = "Donald Trump takes swipe at Russia as first civilians leave breakaway Nagorno-Karabakh"
+    ai_writer = AI_Writer(headline, article)
+    assert ai_writer.detect_topic() in [
+        "images/donald_trump_0.jpg",
+        "images/donald_trump_1.jpg",
+        "images/donald_trump_2.jpg",
+        "images/donald_trump_3.jpg",
+    ]
+
+
+def test_get_named_entities(string_full):
+    ai_writer = AI_Writer(string_full, string_full)
+    assert ai_writer.get_named_entities()[1]["word"] == "Russia"
+
+
+def test_get_named_entities_person_true():
+    headline = ""
+    article = ""
+    ai_writer = AI_Writer(headline, article)
+    list_of_named_entities = [
+        {
+            "entity_group": "LOC",
+            "score": 0.9723994,
+            "word": "Russia",
+            "start": 25,
+            "end": 32,
+        },
+        {
+            "entity_group": "PER",
+            "score": 0.99805874,
+            "word": "John Smith",
+            "start": 67,
+            "end": 84,
+        },
+    ]
+    result = ["John Smith"]
+    assert ai_writer.get_named_entities_person(list_of_named_entities) == result
+
+
+def test_get_named_entities_person_false(string_empty):
+    ai_writer = AI_Writer(string_empty, string_empty)
+    list_of_named_entities = [
+        {
+            "entity_group": "LOC",
+            "score": 0.9723994,
+            "word": "Russia",
+            "start": 25,
+            "end": 32,
+        },
+        {
+            "entity_group": "LOC",
+            "score": 0.9723994,
+            "word": "New York",
+            "start": 55,
+            "end": 62,
+        },
+    ]
+    assert ai_writer.get_named_entities_person(list_of_named_entities) is None
+
+
+def test_get_random_image_of_person_true(string_empty):
+    ai_writer = AI_Writer(string_empty, string_empty)
+    list_of_persons = ["Donald Trump"]
+    result = ai_writer.get_random_image_of_person(list_of_persons)
+    assert result in [
+        "donald_trump_0.jpg",
+        "donald_trump_1.jpg",
+        "donald_trump_2.jpg",
+        "donald_trump_3.jpg",
+    ]
+
+
+def test_get_random_image_of_person_false(string_empty):
+    ai_writer = AI_Writer(string_empty, string_empty)
+    list_of_persons = ["Ebighar Rajjashwili"]
+    assert ai_writer.get_random_image_of_person(list_of_persons) is None
+
+
+def test_classify_article_to_topic(string_empty, string_full):
+    ai_writer = AI_Writer(string_empty, string_full)
+    assert ai_writer.classify_article_to_topic(string_full) == "politics"
+
+
+def test_rewrite_text_test_type(string_empty, string_full):
+    ai_writer = AI_Writer(string_empty, string_empty)
+    assert isinstance(ai_writer.rewrite_text(string_full, 1, 1), str) is True
+
+
+def test_rewrite_text_test_non_equality(string_empty, string_full):
+    ai_writer = AI_Writer(string_empty, string_empty)
+    assert ai_writer.rewrite_text(string_full, 1, 1) != string_full
 
 
 def test_contains_pattern1():
