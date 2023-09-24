@@ -109,20 +109,8 @@
                       <img src="{{ article.image.url }}" alt="">
                     </a>
                     </div>
-                  <!-- <div class="action-box">
-                    <div class="action">
-                      <a href="">
-                        <img src="{% static '/newsapp/images/like.png' %}" alt="">
-                      </a>
-                      <a href="">
-                        <img src="{% static '/newsapp/images/comment.png' %}" alt="">
-                      </a>
-                      <a href="">
-                        <img src="{% static '/newsapp/images/share.png' %}" alt="">
-                      </a>
-                    </div>
-                    </div> -->
                   <div class="detail-box">
+                    <p>{{ article.pub_date|myDate }}</p>
                     <h6>
                       <a href="{% url 'newsapp:detail' article.id %}">
                       {{ article.headline }}
