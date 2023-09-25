@@ -14,18 +14,17 @@ register = template.Library()
 
 
 class Author(models.Model):
-    # TODO: add image field storing author's photo from thispersondoesnotexists
     class NameSurname(models.TextChoices):
-        JORDAN = "Jordan Price"
-        IAN = "Ian Alvarez"
-        WALLACE = "Wallace Castillo"
-        KEN = "Ken Sanders"
         BOB = "Bob Patel"
-        JAIME = "Jaime Myers"
         ELLA = "Ella Long"
-        STACEY = "Stacey Ross"
-        WILMA = "Wilma Foster"
         GINA = "Gina Jimenez"
+        IAN = "Ian Alvarez"
+        JAIME = "Jaime Myers"
+        JORDAN = "Jordan Price"
+        KEN = "Ken Sanders"
+        STACEY = "Stacey Ross"
+        WALLACE = "Wallace Castillo"
+        WILMA = "Wilma Foster"
 
     name_surname = models.CharField(
         max_length=100,
@@ -33,6 +32,8 @@ class Author(models.Model):
         default=NameSurname.JORDAN,
         primary_key=True,
     )
+
+    image = models.ImageField(upload_to="images/authors/", default="wallace_castillo.jpg")
 
     def __str__(self):
         return self.name_surname

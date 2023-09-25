@@ -5,9 +5,14 @@
 <div class="col-sm-9">
   <div class="d-flex flex-column align-items-end">
     <div class="custom_heading-container">
-      <h2>
-        Articles by {{ author_name_surname }}
-      </h2>
+      <div class="author-image">
+        <img src="{{ author.image.url }}" alt="">
+      </div>
+      <div>
+        <h2>
+          Articles by {{ author_name_surname }}
+        </h2>
+      </div>
     </div>
   </div>
   <div class="row">

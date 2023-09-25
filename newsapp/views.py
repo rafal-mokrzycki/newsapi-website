@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from nltk.tokenize import sent_tokenize
 
-from .models import Article
+from .models import Article, Author
 
 NUM_OF_LATEST_NEWS = 6
 NUM_OF_RECENTLY_ADDED = 7
@@ -23,7 +23,6 @@ def detail(request, article_id):
     index_1 = NUM_OF_LATEST_NEWS
     index_2 = NUM_OF_LATEST_NEWS + NUM_OF_RECENTLY_ADDED
     article = get_object_or_404(Article, pk=article_id)
-    image = article.image
     recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
     article_text = [sentence for sentence in sent_tokenize(article.article_text)]
     return render(
@@ -32,7 +31,6 @@ def detail(request, article_id):
         {
             "article": article,
             "article_text": article_text,
-            "image": image,
             "recently_added_article_list": recently_added_article_list,
         },
     )
@@ -44,8 +42,8 @@ def author(request, author_name_surname):
     author_articles = Article.objects.filter(author=author_name_surname).order_by(
         "-pub_date"
     )
+    author = get_object_or_404(Author, name_surname=author_name_surname)
     recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
-    short_texts = [article.article_text[:45] + "..." for article in author_articles]
     return render(
         request,
         "newsapp/author.html",
@@ -53,6 +51,6 @@ def author(request, author_name_surname):
             "author_articles": author_articles,
             "recently_added_article_list": recently_added_article_list,
             "author_name_surname": author_name_surname,
-            "short_texts": short_texts,
+            "author": author,
         },
     )

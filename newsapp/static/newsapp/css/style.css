@@ -512,11 +512,20 @@ a:focus {
   width: 100%;
 }
 
-.full-image:hover,
-.full-image:focus {
-  opacity: 90%;
+.author-image {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  margin-right: 10px;
 }
-
+.author-image img {
+  display: inline;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
 .full-image {
   width: 100%;
   height: 150px;
@@ -524,6 +533,12 @@ a:focus {
   object-fit: scale-down;
   object-position: 50% 50%;
   }
+
+.full-image:hover,
+.full-image:focus {
+  opacity: 90%;
+}
+
 .article-image {
   width: 100%;
   height: 450px;
