@@ -1,5 +1,4 @@
 <!-- TODO: make separate files for header and footer -->
-<!-- TODO: wdrożyć HTML best practices https://www.freecodecamp.org/news/html-best-practices/ -->
 <!DOCTYPE html>
 <html lang="en">
   {% load static %}
@@ -75,11 +74,11 @@
                     </div>
                   <div class="detail-box">
                     <p>{{ article.pub_date|myDate }}</p>
-                    <h6>
+                    <h3>
                       <a href="{% url 'newsapp:detail' article.id %}">
                       {{ article.headline }}
                       </a>
-                    </h6>
+                    </h3>
                   </div>
                 </div>
               </div>
