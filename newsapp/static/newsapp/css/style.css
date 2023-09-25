@@ -37,7 +37,7 @@ body {
           align-items: center;
 }
 
-.custom_heading-container h2 {
+.custom_heading-container h1, h2 {
   text-transform: uppercase;
   font-weight: bold;
 }
@@ -326,7 +326,7 @@ a:focus {
   font-family: "Poppins", sans-serif;
 }
 
-.service_section h2,
+.service_section h1,
 .service_section p {
   color: white;
 }
@@ -498,7 +498,7 @@ a:focus {
   opacity: 1;
 }
 
-.news_section h2,
+.news_section h1,
 .news_section p,
 .news_section a {
   font-family: "Poppins", sans-serif;
@@ -572,8 +572,8 @@ a:focus {
   opacity: 1;
 }
 
-.news_section .box .detail-box h4 {
-  text-transform: uppercase;
+.news_section .box .detail-box h3 {
+  /* text-transform: uppercase; */
   font-weight: bold;
   margin-top: 30px;
 }
@@ -615,17 +615,17 @@ a:focus {
           align-items: center;
 }
 
-.subscribe_section h2,
+.subscribe_section h1,
 .subscribe_section button {
   font-family: "Poppins", sans-serif;
 }
 
-.subscribe_section h2 {
+.subscribe_section h1 {
   color: #ffffff;
   text-transform: uppercase;
 }
 
-.subscribe_section h2 span {
+.subscribe_section h1 span {
   text-transform: none;
   font-weight: bold;
 }

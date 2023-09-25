@@ -63,7 +63,7 @@ body {
   display: flex;
   align-items: center;
 
-  h2 {
+  h1 {
     text-transform: uppercase;
     font-weight: bold;
   }
@@ -333,7 +333,7 @@ a:focus {
 
   @include secondary-font();
 
-  h2,
+  h1,
   p {
     color: white;
   }
@@ -484,7 +484,7 @@ a:focus {
 // news section
 .news_section {
 
-  h2,
+  h1,
   p,
   a {
     @include secondary-font();
@@ -517,8 +517,8 @@ a:focus {
     }
 
     .detail-box {
-      h4 {
-        text-transform: uppercase;
+      h3 {
+        // text-transform: uppercase;
         font-weight: bold;
       }
 
@@ -545,12 +545,12 @@ a:focus {
     align-items: center;
   }
 
-  h2,
+  h1,
   button {
     @include secondary-font();
   }
 
-  h2 {
+  h1 {
     color: $white;
     text-transform: uppercase;
 
