@@ -27,8 +27,7 @@ def test_get_original_article_text_true():
     headline = "Taylor Swift cheers on Travis Kelce at Kansas City Chiefs game"
     filter_ = True
     result = get_original_article_text(url, headline, filter_)
-    assert result[0] == headline
-    assert isinstance(result[1], str) is True
+    assert (result[0] == headline) and (isinstance(result[1], str) is True)
 
 
 def test_filter_text_ad():

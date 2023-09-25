@@ -65,7 +65,8 @@ def test_detect_topic_true():
     headline = ""
     article = "Donald Trump takes swipe at Russia as first civilians leave breakaway Nagorno-Karabakh"
     ai_writer = AI_Writer(headline, article)
-    assert ai_writer.detect_topic() in [
+    ai_writer.detect_topic()
+    assert ai_writer.uri in [
         "images/donald_trump_0.jpg",
         "images/donald_trump_1.jpg",
         "images/donald_trump_2.jpg",

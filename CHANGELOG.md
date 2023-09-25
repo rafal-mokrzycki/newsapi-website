@@ -1,3 +1,7 @@
+#### 0.0.4
+
+- Update tests for `ai_writer.py`, `article_parser.py` and `validators.py`
+
 #### 0.0.3
 
 - Restructure of Django app
