@@ -2,6 +2,7 @@ import logging
 import re
 
 from newspaper import Article
+from newspaper.article import ArticleException
 
 
 def get_original_article_text(url: str, headline: str, filter_: bool = True) -> str:
@@ -17,10 +18,15 @@ def get_original_article_text(url: str, headline: str, filter_: bool = True) -> 
         str: Headline and original article text (filtered).
     """
     article = Article(url=url)
-    article.download()
+    try:
+        article.download()
+    except ArticleException:
+        logging.error("Article not properly downloaded")
+        return headline, None
     article.parse()
     if article.text == "":
         logging.error("Article not properly downloaded")
+        return headline, None
     else:
         logging.info("Article downloaded")
     if filter_:
@@ -44,11 +50,11 @@ def filter_text(article_raw_text: str, filter_: list[str] | None = None) -> str:
         str: Filtered article.
     """
     if filter_ is None:
-        filter_ = [r"ad(vert(isement)?)?s?"]
+        filter_ = [r"\bad(vert(is(e)?ment)?)?s?\b"]
 
     for pattern in filter_:
         article_raw_text = re.sub(
             pattern=pattern, repl="", string=article_raw_text, flags=re.I
         )
 
-    return article_raw_text.replace("\n", "")
+    return article_raw_text.replace("\n", "").replace("  ", " ")

@@ -42,6 +42,8 @@ class Command(BaseCommand):
                 headline, article = article_parser.get_original_article_text(
                     element[0], element[1]
                 )
+                if article is None:
+                    continue
                 ai_writer = AI_Writer(headline=headline, article=article, mode=mode)
                 ai_writer.rewrite_headline()
                 ai_writer.rewrite_article()
