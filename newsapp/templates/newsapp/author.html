@@ -1,15 +1,22 @@
 {% extends 'newsapp/base.html' %}
 {% block content %}
+{% load static %}
+{% load newsapp_extras %}
 <div class="col-sm-9">
   <div class="d-flex flex-column align-items-end">
     <div class="custom_heading-container">
-      <h1>
-        Latest News
-      </h1>
+      <div class="author-image">
+        <img src="{{ author.image.url }}" alt="">
+      </div>
+      <div>
+        <h2>
+          Articles by {{ author_name_surname }}
+        </h2>
+      </div>
     </div>
   </div>
   <div class="row">
-    {% for article in latest_article_list %}
+    {% for article in author_articles %}
     <div class="col-sm-4">
       <div class="box">
         <div class="img-box full-image">
@@ -17,12 +24,18 @@
           <img alt="" src="{{ article.image.url }}" >
           </a>
         </div>
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <div class="box">
         <div class="detail-box">
           <h3>
             <a href="{% url 'newsapp:detail' article.id %}">
             {{ article.headline }}
             </a>
           </h3>
+          <p>Published: {{ article.pub_date|myDate }}</p>
+          <p>{{ article.article_text | truncatechars:200 }}</p>
         </div>
       </div>
     </div>

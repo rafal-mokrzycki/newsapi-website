@@ -37,7 +37,7 @@ body {
           align-items: center;
 }
 
-.custom_heading-container h2 {
+.custom_heading-container h1, h2 {
   text-transform: uppercase;
   font-weight: bold;
 }
@@ -113,10 +113,13 @@ main {
   margin-top: 3%;
 }
 
-a,
+a {
+  text-decoration: none;
+}
+
 a:hover,
 a:focus {
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 a:hover,
@@ -323,7 +326,7 @@ a:focus {
   font-family: "Poppins", sans-serif;
 }
 
-.service_section h2,
+.service_section h1,
 .service_section p {
   color: white;
 }
@@ -495,7 +498,7 @@ a:focus {
   opacity: 1;
 }
 
-.news_section h2,
+.news_section h1,
 .news_section p,
 .news_section a {
   font-family: "Poppins", sans-serif;
@@ -509,6 +512,20 @@ a:focus {
   width: 100%;
 }
 
+.author-image {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.author-image img {
+  display: inline;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
 .full-image {
   width: 100%;
   height: 150px;
@@ -516,6 +533,12 @@ a:focus {
   object-fit: scale-down;
   object-position: 50% 50%;
   }
+
+.full-image:hover,
+.full-image:focus {
+  opacity: 90%;
+}
+
 .article-image {
   width: 100%;
   height: 450px;
@@ -523,10 +546,19 @@ a:focus {
   object-fit: scale-down;
   object-position: 50% 50%;
 }
+
 .subtitle-box {
   padding-top: 20px;
   padding-bottom: 20px;
 }
+.subtitle-box .author p {
+  color:rgb(63, 63, 63);
+  font-size: smaller;
+}
+.subtitle-box .author a {
+  text-decoration: underline;
+}
+
 .sm-icon {
   height: 45px;
   padding-right: 1%;
@@ -555,20 +587,23 @@ a:focus {
   opacity: 1;
 }
 
-.news_section .box .detail-box h4 {
-  text-transform: uppercase;
+.news_section .box .detail-box h3 {
+  /* text-transform: uppercase; */
   font-weight: bold;
+  margin-top: 30px;
 }
 
 .news_section .box .detail-box p {
   margin-top: 15px;
+  font-size: smaller;
 }
 
 .news_section .box .detail-box a {
   display: inline-block;
   font-weight: bold;
-  margin-top: 45px;
 }
+
+
 
 .news_section .box .share-box img {
   width: 25px;
@@ -578,15 +613,15 @@ a:focus {
   font-family: "Roboto", sans-serif;
   color: #0c0c0c;
 }
-.news_section .recent-news-box a {
-  text-decoration: none;
-}
+/* .news_section .recent-news-box a {
+  text-decoration: underline;
+} */
 .news_section .recent-news-box h6 {
   font-size: 1rem;
   font-weight: bold;}
 
 .subscribe_section {
-  background-color: #021056;
+  background-color: #1e025b;
 }
 
 .subscribe_section .row {
@@ -595,17 +630,17 @@ a:focus {
           align-items: center;
 }
 
-.subscribe_section h2,
+.subscribe_section h1,
 .subscribe_section button {
   font-family: "Poppins", sans-serif;
 }
 
-.subscribe_section h2 {
+.subscribe_section h1 {
   color: #ffffff;
   text-transform: uppercase;
 }
 
-.subscribe_section h2 span {
+.subscribe_section h1 span {
   text-transform: none;
   font-weight: bold;
 }
@@ -687,7 +722,7 @@ a:focus {
 }
 
 .client_section .client_container .box .client-id .name h5 {
-  color: #021056;
+  color: #1e025b;
 }
 
 .client_section .client_container .box .client-id .name h6 {
@@ -836,7 +871,7 @@ a:focus {
 .info_section {
   text-align: center;
   font-family: "Poppins", sans-serif;
-  background-color: #021056;
+  background-color: #1e025b;
   color: #ffffff;
 }
 

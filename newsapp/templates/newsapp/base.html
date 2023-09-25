@@ -1,0 +1,140 @@
+<!-- TODO: make separate files for header and footer -->
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+  {% load newsapp_extras %}
+  <head>
+    <!-- Basic -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Site Metas -->
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>News Portal</title>
+    <!-- slider stylesheet -->
+    <link rel="stylesheet" type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'newsapp/css/bootstrap.css' %}" />
+    <!-- fonts style -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Roboto:400,700&display=swap" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <!-- <link href="static/newsapp/css/style.css" rel="stylesheet" /> -->
+    <link href="{% static 'newsapp/css/style.css' %}" rel="stylesheet" />
+    <!-- responsive style -->
+    <link href="{% static 'newsapp/css/responsive.css' %}" rel="stylesheet" />
+  </head>
+  <body class="sub_page">
+    <div class="hero_area">
+      <!-- header section strats -->
+      <header class="header_section">
+        <div class="container-fluid">
+          <nav class="navbar navbar-expand-lg custom_nav-container ">
+            <a class="navbar-brand" href="/newsapp/">
+              <img alt="" src="{% static 'newsapp/images/logo.png' %}" >
+              <span>
+              News Portal
+              </span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+          </nav>
+        </div>
+      </header>
+      <!-- end header section -->
+    </div>
+    <!-- news section -->
+    <main>
+      <section class="news_section layout_padding">
+        <div class="container">
+        <div class="row">
+          {% block content %}
+          {% endblock %}
+          <div class="col-sm-3">
+            <div class="d-flex flex-column align-items-end">
+              <div class="custom_heading-container">
+                <h2>
+                  May also interest you
+                </h2>
+              </div>
+            </div>
+            <div class="row">
+              {% for article in recently_added_article_list %}
+              <div class="col-sm-12">
+                <div class="box">
+                  <div class="img-box full-image">
+                    <a href="{% url 'newsapp:detail' article.id %}">
+                      <img alt="" src="{{ article.image.url }}" >
+                    </a>
+                    </div>
+                  <div class="detail-box">
+                    <p>{{ article.pub_date|myDate }}</p>
+                    <h3>
+                      <a href="{% url 'newsapp:detail' article.id %}">
+                      {{ article.headline }}
+                      </a>
+                    </h3>
+                  </div>
+                </div>
+              </div>
+
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- end news section -->
+    <!-- TODO: add advert below 'recently added' -->
+    <!-- info section -->
+    <footer>
+      <section class="info_section layout_padding">
+        <div class="container">
+          <div class="info_social">
+            <div>
+              <a href="">
+              <img alt="" src="{% static '/newsapp/images/fb.png' %}" >
+              </a>
+            </div>
+            <div>
+              <a href="">
+              <img alt="" src="{% static '/newsapp/images/twitter-2.png' %}" >
+              </a>
+            </div>
+            <div>
+              <a href="">
+              <img alt="" src="{% static '/newsapp/images/linkedin.png' %}" >
+              </a>
+            </div>
+            <div>
+              <a href="">
+              <img alt="" src="{% static '/newsapp/images/insta.png' %}" >
+              </a>
+            </div>
+          </div>
+          <div>
+            <p>
+              All rights of the selected material reserved
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- end info_section -->
+      <!-- footer section -->
+      <!-- <section class="container-fluid footer_section">
+        <p>
+          &copy; 2019 All Rights Reserved By
+          <a href="https://html.design/">Free Html Templates</a>
+        </p>
+        </section> -->
+      <!-- footer section -->
+      <script type="text/javascript" src="{% static '/newsapp/js/jquery-3.4.1.min.js' %}"></script>
+      <script type="text/javascript" src="{% static '/newsapp/js/bootstrap.js' %}"></script>
+    </footer>
+  </body>
+</html>
