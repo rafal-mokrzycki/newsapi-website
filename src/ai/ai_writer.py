@@ -18,7 +18,11 @@ from utilities.utils import CustomLogger, wait_for_web_scraping
 NER_MODEL = "Jean-Baptiste/camembert-ner"
 CLASSIFICATION_MODEL = "facebook/bart-large-mnli"
 TEXT_GENERATION_MODEL = "EleutherAI/gpt-neo-125M"
-CLASSES = ["politics", "business", "economy"]
+CLASSES = [
+    "politics",
+    "business",
+    "economy",
+]  # store it in config and then create classes and sub-classes for better user experience
 
 config = load_config()
 logger = CustomLogger(Path(__file__).name)

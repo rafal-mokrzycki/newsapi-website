@@ -1,0 +1,45 @@
+{% extends 'newsapp/base.html' %}
+{% block content %}
+{% load static %}
+{% load newsapp_extras %}
+<div class="col-sm-9">
+  <div class="d-flex flex-column align-items-end">
+    <div class="custom_heading-container">
+      <div class="author-image">
+        <img src="{{ author.image.url }}" alt="">
+      </div>
+      <div>
+        <h2>
+          More on {{ topic_name }}
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    {% for article in topic_articles %}
+    <div class="col-sm-4">
+      <div class="box">
+        <div class="img-box full-image">
+          <a href="{% url 'newsapp:detail' article.id %}">
+          <img alt="" src="{{ article.image.url }}" >
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <div class="box">
+        <div class="detail-box">
+          <h3>
+            <a href="{% url 'newsapp:detail' article.id %}">
+            {{ article.headline }}
+            </a>
+          </h3>
+          <p>Published: {{ article.pub_date|myDate }}</p>
+          <p>{{ article.article_text | truncatechars:200 }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

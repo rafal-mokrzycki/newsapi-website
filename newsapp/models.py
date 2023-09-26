@@ -13,6 +13,23 @@ register = template.Library()
 # and a switch for them to be able to run locally and in cloud
 
 
+class Topic(models.Model):
+    class Name(models.TextChoices):
+        POLITICS = "politics"
+        BUSINESS = "business"
+        ECONOMY = "economy"
+
+    name = models.CharField(
+        max_length=100,
+        choices=Name.choices,
+        default=Name.POLITICS,
+        primary_key=True,
+    )
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class Author(models.Model):
     class NameSurname(models.TextChoices):
         BOB = "Bob Patel"
@@ -44,7 +61,7 @@ class Article(models.Model):
     article_text = models.CharField(max_length=8000)
     image = models.ImageField(upload_to="images/")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    topic = models.CharField(max_length=100)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     pub_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -54,3 +54,21 @@ def author(request, author_name_surname):
             "author": author,
         },
     )
+
+
+def topic(request, topic_name):
+    index_1 = NUM_OF_LATEST_NEWS
+    index_2 = NUM_OF_LATEST_NEWS + NUM_OF_RECENTLY_ADDED
+    topic_articles = Article.objects.filter(author=topic_name).order_by("-pub_date")
+    topic = get_object_or_404(Topic, name_surname=topic_name)
+    recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
+    return render(
+        request,
+        "newsapp/author.html",
+        {
+            "topic_articles": topic_articles,
+            "recently_added_article_list": recently_added_article_list,
+            "topic_name": topic_name,
+            "topic": topic,
+        },
+    )
