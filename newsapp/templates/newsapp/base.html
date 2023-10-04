@@ -43,6 +43,35 @@
               aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                <ul class="navbar-nav  ">
+                  {% for topic in topic_list %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'newsapp:topic' topic.name %}">{{ topic.name }} </a>
+                  </li>
+                  {% endfor %}
+                  <!-- <li class="nav-item active">
+                    <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="about.html">About </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="service.html">Services </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="portfolio.html"> Portfolio</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="news.html"> news </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="contact.html">Contact us</a>
+                  </li> -->
+                </ul>
+              </div>
+
           </nav>
         </div>
       </header>
@@ -89,9 +118,6 @@
         </div>
       </section>
     </main>
-    <!-- end news section -->
-    <!-- TODO: add advert below 'recently added' -->
-    <!-- info section -->
     <footer>
       <section class="info_section layout_padding">
         <div class="container">

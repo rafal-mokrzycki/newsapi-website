@@ -22,6 +22,13 @@ CLASSES = [
     "politics",
     "business",
     "economy",
+    "world",
+    "opinion",
+    "health",
+    "entertainment",
+    "lifestyle",
+    "travel",
+    "sports",
 ]  # store it in config and then create classes and sub-classes for better user experience
 
 config = load_config()

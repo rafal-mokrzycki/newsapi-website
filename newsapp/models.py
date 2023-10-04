@@ -6,23 +6,19 @@ Run python manage.py migrate to apply those changes to the database.
 from django import template
 from django.db import models
 
-register = template.Library()
+from src.config.config import load_config
 
+register = template.Library()
+config = load_config()
 
 # TODO: add possibility to add photos from (1) Google Storage and (2) local files \
 # and a switch for them to be able to run locally and in cloud
 
 
 class Topic(models.Model):
-    class Name(models.TextChoices):
-        POLITICS = "politics"
-        BUSINESS = "business"
-        ECONOMY = "economy"
-
     name = models.CharField(
         max_length=100,
-        choices=Name.choices,
-        default=Name.POLITICS,
+        choices=[(topic, topic) for topic in config["django"]["topics"]],
         primary_key=True,
     )
 
@@ -31,26 +27,13 @@ class Topic(models.Model):
 
 
 class Author(models.Model):
-    class NameSurname(models.TextChoices):
-        BOB = "Bob Patel"
-        ELLA = "Ella Long"
-        GINA = "Gina Jimenez"
-        IAN = "Ian Alvarez"
-        JAIME = "Jaime Myers"
-        JORDAN = "Jordan Price"
-        KEN = "Ken Sanders"
-        STACEY = "Stacey Ross"
-        WALLACE = "Wallace Castillo"
-        WILMA = "Wilma Foster"
-
     name_surname = models.CharField(
         max_length=100,
-        choices=NameSurname.choices,
-        default=NameSurname.JORDAN,
+        choices=[(author, author) for author in config["django"]["authors"]],
         primary_key=True,
     )
 
-    image = models.ImageField(upload_to="images/authors/", default="wallace_castillo.jpg")
+    image = models.ImageField(upload_to="images/authors/")
 
     def __str__(self):
         return self.name_surname

@@ -4,7 +4,7 @@ import repackage
 from django.core.management.base import BaseCommand
 from tqdm.auto import tqdm
 
-from newsapp.models import Article, Author
+from newsapp.models import Article, Author, Topic
 
 repackage.up(3)
 from src.ai.ai_writer import AI_Writer
@@ -64,7 +64,7 @@ class Command(BaseCommand):
                     article_text=ai_writer.rewritten_article,
                     image=ai_writer.uri,
                     author=Author.objects.get(name_surname=ai_writer.author),
-                    topic=ai_writer.topic,
+                    topic=Topic(name=ai_writer.topic),
                     pub_date=datetime.datetime.now(),
                 )
                 article.save()

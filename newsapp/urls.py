@@ -13,6 +13,8 @@ urlpatterns = [
     path("<int:article_id>/", views.detail, name="detail"),
     # ex: /newsapp/author=/
     path("author=<str:author_name_surname>/", views.author, name="author"),
+    # ex: /newsapp/topic=/
+    path("topic=<str:topic_name>/", views.topic, name="topic"),
 ]
 if settings.DEBUG:  # new
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

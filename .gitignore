@@ -137,3 +137,6 @@ api.key
 images/*.jpg
 images/*.png
 article_*.txt
+
+# original frontend
+frontend/

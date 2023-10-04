@@ -25,6 +25,7 @@
       <div class="author">
       <p>Published: {{ article.pub_date|myDate }}</p>
       <p>Author: <a class="author" href="{% url 'newsapp:author' article.author %}">{{ article.author }}</a></p>
+      <p>Tags: <a class="author" href="{% url 'newsapp:topic' article.topic %}">{{ article.topic }}</a></p>
     </div>
     <div class="action-box">
         <div class="action">

@@ -5,9 +5,9 @@
 <div class="col-sm-9">
   <div class="d-flex flex-column align-items-end">
     <div class="custom_heading-container">
-      <div class="author-image">
-        <img src="{{ author.image.url }}" alt="">
-      </div>
+      <!-- <div class="author-image">
+        <img src="{{ topi.image.url }}" alt="">
+      </div> -->
       <div>
         <h2>
           More on {{ topic_name }}
@@ -34,7 +34,7 @@
             {{ article.headline }}
             </a>
           </h3>
-          <p>Published: {{ article.pub_date|myDate }}</p>
+          <p>Published: {{ article.pub_date|myDate }} by <a href="{% url 'newsapp:author' article.author %}">{{ article.author }}</a></p>
           <p>{{ article.article_text | truncatechars:200 }}</p>
         </div>
       </div>
