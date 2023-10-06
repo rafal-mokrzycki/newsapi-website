@@ -15,24 +15,17 @@ from news.news_handler import NewsHandler
 from parsers.article_parser import get_original_article_text
 from utilities.utils import CustomLogger, wait_for_web_scraping
 
+config = load_config()
+
 NER_MODEL = "Jean-Baptiste/camembert-ner"
 CLASSIFICATION_MODEL = "facebook/bart-large-mnli"
 TEXT_GENERATION_MODEL = "EleutherAI/gpt-neo-125M"
-CLASSES = [
-    "politics",
-    "business",
-    "economy",
-    "world",
-    "opinion",
-    "health",
-    "entertainment",
-    "lifestyle",
-    "travel",
-    "sports",
-]  # store it in config and then create classes and sub-classes for better user experience
+CLASSES = config["django"]["topics"]
 
-config = load_config()
 logger = CustomLogger(Path(__file__).name)
+# TODO: sth wrong with image assignement
+# TODO: test and compare original text and rewritter article
+# TODO: add filter for removing articles with less than 8 (5?) sentences
 
 
 class AI_Writer:

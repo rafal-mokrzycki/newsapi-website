@@ -2,44 +2,81 @@
 {% block content %}
 {% load static %}
 {% load newsapp_extras %}
-<div class="col-sm-9">
-  <div class="d-flex flex-column align-items-end">
-    <div class="custom_heading-container">
-      <!-- <div class="author-image">
-        <img src="{{ topi.image.url }}" alt="">
-      </div> -->
-      <div>
-        <h2>
-          More on {{ topic_name }}
-        </h2>
+<main>
+  <section class="news_section layout_padding">
+    <div class="container">
+    <div class="row">
+      <div class="col-sm-9">
+        <div class="d-flex flex-column align-items-end">
+          <div class="custom_heading-container">
+            <!-- <div class="author-image">
+              <img src="{{ topi.image.url }}" alt="">
+              </div> -->
+            <div>
+              <h2>
+                More on {{ topic_name }}
+              </h2>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          {% for article in topic_articles %}
+          <div class="col-sm-4">
+            <div class="box">
+              <div class="img-box full-image">
+                <a href="{% url 'newsapp:detail' article.id %}">
+                <img alt="" src="{{ article.image.url }}" >
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-8">
+            <div class="box">
+              <div class="detail-box">
+                <h3>
+                  <a href="{% url 'newsapp:detail' article.id %}">
+                  {{ article.headline }}
+                  </a>
+                </h3>
+                <p>Published: {{ article.pub_date|myDate }} by <a href="{% url 'newsapp:author' article.author %}">{{ article.author }}</a></p>
+                <p>{{ article.article_text | truncatechars:200 }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="row">
-    {% for article in topic_articles %}
-    <div class="col-sm-4">
-      <div class="box">
-        <div class="img-box full-image">
-          <a href="{% url 'newsapp:detail' article.id %}">
-          <img alt="" src="{{ article.image.url }}" >
-          </a>
+      <div class="col-sm-3">
+        <div class="d-flex flex-column align-items-end">
+          <div class="custom_heading-container">
+            <h2>
+              May also interest you
+            </h2>
+          </div>
+        </div>
+        <div class="row">
+          {% for article in recently_added_article_list %}
+          <div class="col-sm-12">
+            <div class="box">
+              <div class="img-box full-image">
+                <a href="{% url 'newsapp:detail' article.id %}">
+                <img alt="" src="{{ article.image.url }}" >
+                </a>
+              </div>
+              <div class="detail-box">
+                <p>{{ article.pub_date|myDate }}</p>
+                <h3>
+                  <a href="{% url 'newsapp:detail' article.id %}">
+                  {{ article.headline }}
+                  </a>
+                </h3>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
-    <div class="col-sm-8">
-      <div class="box">
-        <div class="detail-box">
-          <h3>
-            <a href="{% url 'newsapp:detail' article.id %}">
-            {{ article.headline }}
-            </a>
-          </h3>
-          <p>Published: {{ article.pub_date|myDate }} by <a href="{% url 'newsapp:author' article.author %}">{{ article.author }}</a></p>
-          <p>{{ article.article_text | truncatechars:200 }}</p>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-</div>
+  </section>
+</main>
 {% endblock %}

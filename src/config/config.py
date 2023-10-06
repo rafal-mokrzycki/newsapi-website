@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
 
+# TODO: add subcategories in config.json
+# TODO: add subcategories in detect topic
+
 
 def load_config(file_name="config.json") -> dict:
     """

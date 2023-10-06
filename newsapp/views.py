@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import get_object_or_404, render
 from nltk.tokenize import sent_tokenize
 
@@ -13,10 +15,13 @@ def index(request):
     latest_article_list = Article.objects.order_by("-pub_date")[:index_1]
     recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
     topic_list = Topic.objects.all()
+    current_year = datetime.datetime.now().year
     context = {
         "latest_article_list": latest_article_list,
         "recently_added_article_list": recently_added_article_list,
         "topic_list": topic_list,
+        "current_year": current_year,
+        "current_year_3": current_year - 3,
     }
     return render(request, "newsapp/index.html", context)
 
@@ -25,9 +30,12 @@ def detail(request, article_id):
     index_1 = NUM_OF_LATEST_NEWS
     index_2 = NUM_OF_LATEST_NEWS + NUM_OF_RECENTLY_ADDED
     article = get_object_or_404(Article, pk=article_id)
-    recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
+    recently_added_article_list = Article.objects.exclude(
+        headline=article.headline
+    ).order_by("-pub_date")[index_1:index_2]
     article_text = [sentence for sentence in sent_tokenize(article.article_text)]
     topic_list = Topic.objects.all()
+    current_year = datetime.datetime.now().year
     return render(
         request,
         "newsapp/detail.html",
@@ -36,6 +44,8 @@ def detail(request, article_id):
             "article_text": article_text,
             "recently_added_article_list": recently_added_article_list,
             "topic_list": topic_list,
+            "current_year": current_year,
+            "current_year_3": current_year - 3,
         },
     )
 
@@ -47,8 +57,11 @@ def author(request, author_name_surname):
         "-pub_date"
     )
     author = get_object_or_404(Author, name_surname=author_name_surname)
-    recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
+    recently_added_article_list = Article.objects.exclude(
+        author=author.name_surname
+    ).order_by("-pub_date")[index_1:index_2]
     topic_list = Topic.objects.all()
+    current_year = datetime.datetime.now().year
     return render(
         request,
         "newsapp/author.html",
@@ -58,6 +71,8 @@ def author(request, author_name_surname):
             "author_name_surname": author_name_surname,
             "author": author,
             "topic_list": topic_list,
+            "current_year": current_year,
+            "current_year_3": current_year - 3,
         },
     )
 
@@ -69,6 +84,8 @@ def topic(request, topic_name):
     topic = get_object_or_404(Topic, name=topic_name)
     recently_added_article_list = Article.objects.order_by("-pub_date")[index_1:index_2]
     topic_list = Topic.objects.all()
+    current_year = datetime.datetime.now().year
+    current_year_3 = datetime.datetime.now().year - 3
     return render(
         request,
         "newsapp/topic.html",
@@ -78,5 +95,7 @@ def topic(request, topic_name):
             "topic_name": topic_name,
             "topic": topic,
             "topic_list": topic_list,
+            "current_year": current_year,
+            "current_year_3": current_year - 3,
         },
     )
